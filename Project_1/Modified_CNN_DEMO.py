@@ -63,6 +63,7 @@ def load_data(filefolder):
     label = np.array(label)
     # label = label['Label'].values
     return data, label
+
   
 ########### Test array output ###############
 data, label = load_data('test')
@@ -70,6 +71,19 @@ print(data.shape)
 
 
 
+######################## Network Building #############################
+
+def net(onehots_shape): #[73,398]
+    if not isinstance(onehots_shape, list):
+        onehots_shape = list(onehots_shape)
+    input = tf.placeholder(tf.float32, [None] + oneshots_shape, name='input') # tf.placeholder(): TensorFlow中的占位符，用于传入外部数据
+    input = tf.reshape(input, [-1] + onehots_shape + [1]) # tf.reshape(tensor, shape, name=None): 函数的作用是将tensor变换为参数shape的形式。
+    #input = tf.reshape(input, [None, 73, 398, 1])
+    label = tf.placeholder(tf.int32, [None], name='label')
+    label = tf.one_hot(label, 2) # 该函数的功能主要是将indices（label）转换成one_hot类型的张量输出，2是depth，表示张量的尺寸，indices中元素默认不超过（depth-1），如果超过，输出为[0,0,···,0]
+    conv1 = tf.keras.layers.Conv2D(32, 5, 1, padding='same', activation=tf.nn.relu)(input) # 卷积层一，padding表示填充方式，activation表示激活函数，输入为input
+    pool1 = tf.keras.layers.MaxPool2D(2, 2)(conv1)
+        
 
 
     
