@@ -35,6 +35,42 @@ EPOCH = 2
 print(tf.__version__)
 
 
-############################# Environment Settings ##########################################
+############################# Load Data ##########################################
+
+def load_data(filefolder):
+    ori_filefolder = filefolder
+    filefolder = '../input/cs410-2020-fall-ai-project-1/data/' + filefolder 
+    
+    data = np.load(os.path.abspath(filefolder + '/names_onehots.npy'), allow_pickle=True).item() # allow_pickle: 可选，布尔值，允许使用 Python pickles 保存对象数组；data为dict字典类型
+    data = data['onehots']
+    if ori_filefolder == 'test':
+        label_filename = filefolder + '/output_sample.txt' 
+        #label = pd.read_csv(os.path.abspath(filefolder + '/output_sample.csv'), sep=',')
+    else:
+        label_filename = filefolder + '/names_labels.txt'
+        #label = pd.read_csv(os.path.abspath(filefolder + '/names_labels.csv'), sep=',')
+    label = []
+    
+    with open(label_filename, 'r') as f: # with open() 用来打开本地文件
+        header = f.readline().replace('\n', '').split(',')
+        if header[0] == 'Label':
+            label_index = 0
+        else:
+            label_index = 1
+        for line in f.readlines():
+            line = line.replace('\n', '').split(',')
+            label.append((line[label_index])) # 本来是int(line[label_index])
+    label = np.array(label)
+    # label = label['Label'].values
+    return data, label
+  
+# Test array output
+# data, label = load_data('test')
+# print(data.shape)
+
+
+
+    
+
 
 
