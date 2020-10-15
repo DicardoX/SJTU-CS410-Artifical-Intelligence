@@ -64,9 +64,11 @@ def load_data(filefolder):
     # label = label['Label'].values
     return data, label
   
-# Test array output
-# data, label = load_data('test')
-# print(data.shape)
+########### Test array output ###############
+data, label = load_data('test')
+print(data.shape)
+
+
 
 
 
