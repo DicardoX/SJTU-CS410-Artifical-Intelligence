@@ -11,3 +11,7 @@
 &emsp; 卷积神经网络（CNN）详解：[CNN详解](https://blog.csdn.net/tjlakewalker/article/details/83275322)
 
 &emsp; `MaxPool2D()`：二维池化函数。通常来说，CNN的卷积层之间都会周期性地插入池化层。[CNN学习笔记：池化层](https://www.cnblogs.com/MrSaver/p/10356695.html)
+
+&emsp; 激活函数`activation function`详解：[深度夜戏中几种常见的激活函数理解与总结](https://www.cnblogs.com/XDU-Lakers/p/10557496.html)
+
+
