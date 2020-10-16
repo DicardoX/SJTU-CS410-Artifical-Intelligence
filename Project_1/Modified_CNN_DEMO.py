@@ -77,12 +77,29 @@ def net(onehots_shape): #[73,398]
     if not isinstance(onehots_shape, list):
         onehots_shape = list(onehots_shape)
     input = tf.placeholder(tf.float32, [None] + oneshots_shape, name='input') # tf.placeholder(): TensorFlow中的占位符，用于传入外部数据
-    input = tf.reshape(input, [-1] + onehots_shape + [1]) # tf.reshape(tensor, shape, name=None): 函数的作用是将tensor变换为参数shape的形式。
+    input = tf.reshape(tensor=input, shape=[-1] + onehots_shape + [1]) # tf.reshape(tensor, shape, name=None): 函数的作用是将tensor变换为参数shape的形式。
     #input = tf.reshape(input, [None, 73, 398, 1])
     label = tf.placeholder(tf.int32, [None], name='label')
     label = tf.one_hot(label, 2) # 该函数的功能主要是将indices（label）转换成one_hot类型的张量输出，2是depth，表示张量的尺寸，indices中元素默认不超过（depth-1），如果超过，输出为[0,0,···,0]
+    
     conv1 = tf.keras.layers.Conv2D(32, 5, 1, padding='same', activation=tf.nn.relu)(input) # 卷积层一，padding表示填充方式，activation表示激活函数，输入为input
-    pool1 = tf.keras.layers.MaxPool2D(2, 2)(conv1)
+    pool1 = tf.keras.layers.MaxPool2D(2, 2)(conv1) # 池化层一，kernel_size = 2，表示窗口大小，stride = 2，表示步长（通常与kernel_size相等），输入为conv1
+    
+    conv2 = tf.keras.layers.Conv2D(32, 3, (1, 2), padding='same', activation=tf.nn.relu)(pool1) # 卷积层二
+    pool2 = tf.keras.layers.MaxPool2D(2, 2)(conv2) # 池化层二
+    
+    flat = tf.reshape(tensor=pool2, shape=[-1, 18*50*32]) # 将pool2改变为每“行”18*50*32的shape，-1表示根据原大小推断行数
+    output = tf.keras.layers.Dense(2, name='Output')(flat) # tf.keras.layers.Dense()相当于在全连接层中添加一个层
+    
+    loss = tf.losses.softmax_cross_entropy(onehot_labels=label, logits=output) # 计算cost
+    train_op = tf.train.AdamOptimizer(LR).minimize(loss) # 建立网络中训练的节点并利用Adam算法进行最优化，即最小化loss
+    accuracy = tf.metrics.accuracy(labels=tf.argmax(label, axis=1), predictions=tf.argmax(output, axis=1), )[1]
+    init_op = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer()) #
+    
+    return init_op, train_op, loss, accuracy
+        
+        
+        
         
 
 
