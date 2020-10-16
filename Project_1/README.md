@@ -16,4 +16,9 @@
 
 &emsp; 张量介绍：[【tensorflow】浅谈什么是张量`tensor`](https://blog.csdn.net/qq_31821675/article/details/79188449)
 
+&emsp; TensorFlow `tf.reshape()`函数里的shape详解：[【Tensorflow】tf.reshape 函数](http://www.voidcn.com/article/p-quleiusw-bd.html)
+
+&emsp; 全连接层详解：[CNN——全连接层](https://zhuanlan.zhihu.com/p/33841176)
+
+&emsp; TensorFlow `tf.keras.layers.dense()`函数详解：[Tensorflow笔记之 全连接层tf.kera.layers.Dense()参数含义及用法详解](https://blog.csdn.net/Zh_1999a/article/details/107549858?utm_medium=distribute.pc_relevant_t0.none-task-blog-BlogCommendFromMachineLearnPai2-1.channel_param&depth_1-utm_source=distribute.pc_relevant_t0.none-task-blog-BlogCommendFromMachineLearnPai2-1.channel_param)
 
