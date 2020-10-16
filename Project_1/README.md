@@ -22,3 +22,6 @@
 
 &emsp; TensorFlow `tf.keras.layers.dense()`函数详解：[Tensorflow笔记之 全连接层tf.kera.layers.Dense()参数含义及用法详解](https://blog.csdn.net/Zh_1999a/article/details/107549858?utm_medium=distribute.pc_relevant_t0.none-task-blog-BlogCommendFromMachineLearnPai2-1.channel_param&depth_1-utm_source=distribute.pc_relevant_t0.none-task-blog-BlogCommendFromMachineLearnPai2-1.channel_param)
 
+&emsp; TensorFlow `tf.losses.softmax_cross_entropy()`函数参数解释：[tf.losses.softmax_cross_entropy()及相邻函数中weights参数的设置](https://blog.csdn.net/weixin_42561002/article/details/87802096)
+
+&emsp; TensorFlow `tf.train.AdamOptimizer().minimize(loss)`函数详解：[tensorflow Optimizer.minimize()和gradient clipping](http://www.mamicode.com/info-detail-2375709.html)
