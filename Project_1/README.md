@@ -14,6 +14,6 @@
 
 &emsp; 激活函数`activation function`详解：[深度夜戏中几种常见的激活函数理解与总结](https://www.cnblogs.com/XDU-Lakers/p/10557496.html)
 
-&emsp; 张量介绍：[浅谈什么事张量`tensor`](https://blog.csdn.net/qq_31821675/article/details/79188449)
+&emsp; 张量介绍：[【tensorflow】浅谈什么是张量`tensor`](https://blog.csdn.net/qq_31821675/article/details/79188449)
 
 
