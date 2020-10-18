@@ -94,11 +94,48 @@ def net(onehots_shape): #[73,398]
     loss = tf.losses.softmax_cross_entropy(onehot_labels=label, logits=output) # 计算cost
     train_op = tf.train.AdamOptimizer(LR).minimize(loss) # 建立网络中训练的节点并利用Adam算法进行最优化，即最小化loss
     accuracy = tf.metrics.accuracy(labels=tf.argmax(label, axis=1), predictions=tf.argmax(output, axis=1), )[1] # 计算accuracy
-    init_op = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer()) # tf.group()类似于批处理操作，将一个或多个语句变成操作
+    init_op = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer()) # tf.group()类似于批处理操作，将一个或多个语句变成操作；
+    # tf.global_variables_initializer()添加节点用于初始化全局变量(GraphKeys.GLOBAL_VARIABLES)。返回一个初始化所有全局变量的操作（Op）。在你构建完整个模型并在会话中加载模型后，运行这个节点。
+    # tf.local_variables_initializer()类似，针对局部变量
     
     return init_op, train_op, loss, accuracy
         
         
+  
+        
+######################## Training #############################      
+
+train_data, train_label = load_data('train')
+valid_data, valid_label = load_data('validation')
+test_data, test_label = load_data('test')
+init_op, train_op, loss, accuracy = net(train_data.shape[1:]) # [1:]表示从第一位开始索引，默认到最后一位，否则需要指定
+sess = tf.Session() # Session 是 Tensorflow 为了控制,和输出文件的执行的语句. 运行 session.run() 可以获得你要得知的运算结果, 或者是你所要运算的部分.
+sess.run(init_op) # 运行传递来的init_op，初始化全局和局部变量
+
+train_size = train_data.shape[0]
+for epoch in range(EPOCH):
+    for i in range(0, train_size, BatchSize):
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         
         
         
