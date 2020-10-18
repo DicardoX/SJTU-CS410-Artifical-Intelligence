@@ -93,10 +93,13 @@ def net(onehots_shape): #[73,398]
     
     loss = tf.losses.softmax_cross_entropy(onehot_labels=label, logits=output) # 计算cost
     train_op = tf.train.AdamOptimizer(LR).minimize(loss) # 建立网络中训练的节点并利用Adam算法进行最优化，即最小化loss
-    accuracy = tf.metrics.accuracy(labels=tf.argmax(label, axis=1), predictions=tf.argmax(output, axis=1), )[1]
-    init_op = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer()) #
+    accuracy = tf.metrics.accuracy(labels=tf.argmax(label, axis=1), predictions=tf.argmax(output, axis=1), )[1] # 计算accuracy
+    init_op = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer()) # tf.group()类似于批处理操作，将一个或多个语句变成操作
     
     return init_op, train_op, loss, accuracy
+        
+        
+        
         
         
         
