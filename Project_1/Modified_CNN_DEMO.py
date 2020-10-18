@@ -76,7 +76,7 @@ print(data.shape)
 def net(onehots_shape): #[73,398]
     if not isinstance(onehots_shape, list):
         onehots_shape = list(onehots_shape)
-    input = tf.placeholder(tf.float32, [None] + oneshots_shape, name='input') # tf.placeholder(): TensorFlow中的占位符，用于传入外部数据
+    input = tf.placeholder(tf.float32, [None] + onehots_shape, name='input') # tf.placeholder(): TensorFlow中的占位符，用于传入外部数据
     input = tf.reshape(tensor=input, shape=[-1] + onehots_shape + [1]) # tf.reshape(tensor, shape, name=None): 函数的作用是将tensor变换为参数shape的形式。
     #input = tf.reshape(input, [None, 73, 398, 1])
     label = tf.placeholder(tf.int32, [None], name='label')
@@ -94,13 +94,10 @@ def net(onehots_shape): #[73,398]
     loss = tf.losses.softmax_cross_entropy(onehot_labels=label, logits=output) # 计算cost
     train_op = tf.train.AdamOptimizer(LR).minimize(loss) # 建立网络中训练的节点并利用Adam算法进行最优化，即最小化loss
     accuracy = tf.metrics.accuracy(labels=tf.argmax(label, axis=1), predictions=tf.argmax(output, axis=1), )[1] # 计算accuracy
-    init_op = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer()) # tf.group()类似于批处理操作，将一个或多个语句变成操作；
-    # tf.global_variables_initializer()添加节点用于初始化全局变量(GraphKeys.GLOBAL_VARIABLES)。返回一个初始化所有全局变量的操作（Op）。在你构建完整个模型并在会话中加载模型后，运行这个节点。
-    # tf.local_variables_initializer()类似，针对局部变量
+    init_op = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer()) # tf.group()类似于批处理操作，将一个或多个语句变成操作
     
     return init_op, train_op, loss, accuracy
-        
-        
+    
   
         
 ######################## Training #############################      
