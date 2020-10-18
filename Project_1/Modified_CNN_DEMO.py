@@ -111,7 +111,32 @@ sess.run(init_op) # 运行传递来的init_op，初始化全局和局部变量
 
 train_size = train_data.shape[0]
 for epoch in range(EPOCH):
-    for i in range(0, train_size, BatchSize):
+    for i in range(0, train_size, BatchSize): # 即i从0开始，到train_size，每次增加BatchSize
+        b_data, b_label = train_data[i: i+BatchSize], train_label[i: i+BatchSize]
+        _, loss_ = sess.run([train_op, loss], {'input:0': b_data, 'label:0': b_label}) # -,是什么？
+        
+    if epoch % 1 == 0:
+        accuracy_ = 0
+        for i in range(0, valid_data.shape[0], BatchSize):
+            b_data, b_label = valid_data[i: i+BatchSize], valid_label[i: i+BatchSize]
+            accuracy_ += sess.run(accuracy, {'input:0': b_data, 'label:0': b_label})
+        accuracy_ = accuracy_ * BatchSize / valid_data.shape[0]
+        print('epoch:', epoch, '| train loss: %.4f' % loss_, 'valid accuracy: %.2f' % accuracy_)
+accuracy_ = 0
+
+for i in range(0, test_data.shape[0], BatchSize):
+    b_data, b_label = test_data[i: i+BatchSize], test_label[i: i+BatchSize]
+    accuracy_ += sess.run(accuracy, {'input:0': b_data, 'label:0': b_label})
+accuracy_ = accuracy_ * BatchSize / test_data.shape[0]
+print('test accuracy: %.2f' % accuracy_)
+        
+saver = tf.train.Saver()
+saver.save(sess, './weights/model')
+sess.close()
+        
+        
+        
+        
         
 
 
