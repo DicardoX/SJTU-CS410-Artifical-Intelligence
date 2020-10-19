@@ -43,7 +43,7 @@ def load_data(dir_path=os.path.dirname(os.path.realpath(__file__)), balance=Fals
             if label_list[i]==1:
                 positive_index.append(i)  
             pair.append((data[i],label_list[i]))
-        random.shuffle(positive_index)
+        random.shuffle(positive_index)              # 打乱positive_index数组的元素顺序
         for i in range(delta):
             j = random.choice(positive_index)
             pair.append((data[j],label_list[j]))
