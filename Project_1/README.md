@@ -16,6 +16,8 @@
 
 &emsp; 张量介绍：[【tensorflow】浅谈什么是张量`tensor`](https://blog.csdn.net/qq_31821675/article/details/79188449)
 
+&emsp; `Onehot`独热编码详解：[机器学习：数据预处理之独热编码（One-Hot）](https://www.imooc.com/article/35900)
+
 &emsp; TensorFlow `tf.reshape()`函数里的shape详解：[【Tensorflow】tf.reshape 函数](http://www.voidcn.com/article/p-quleiusw-bd.html)
 
 &emsp; 全连接层详解：[CNN——全连接层](https://zhuanlan.zhihu.com/p/33841176)
