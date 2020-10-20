@@ -10,7 +10,7 @@ import tensorflow as tf
 import time
 
 LR = 0.01
-BatchSize = 256
+BatchSize = 64
 EPOCH = 10
 print(tf.__version__)
 
@@ -61,7 +61,7 @@ def net(onehots_shape): #[73,398]
     pool2 = tf.keras.layers.MaxPool2D(2, 2)(conv2) # 池化层二
     conv3 = tf.keras.layers.Conv2D(CONV_NUM, 3, 3, padding='same', activation=tf.nn.relu)(pool2) # 卷积层三
     conv4 = tf.keras.layers.Conv2D(CONV_NUM, 3, 3, padding='same', activation=tf.nn.relu)(conv3) # 卷积层四
-    pool3 = tf.keras.layers.MaxPool2D(2, 2)(conv4)
+    pool3 = tf.keras.layers.MaxPool2D(2, 2)(conv4) # 池化层三
     
     
     flat = tf.reshape(pool3, [-1, 1*3*CONV_NUM]) # 将pool2改变为每“行”1*3*32的shape，-1表示根据原大小推断行数
@@ -119,7 +119,7 @@ def train_model(lr_ = LR):
             print("Epoch Time(sec): ", dt)
             print("Estimated Time(min): ", round(dt * EPOCH / 60, 1))
     
-        if epoch % 10 == 0:
+        if epoch % 5 == 0:
             lr_ = lr_ / 1.4
         
     accuracy_ = 0
