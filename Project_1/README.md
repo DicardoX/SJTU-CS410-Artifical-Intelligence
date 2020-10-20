@@ -31,3 +31,5 @@
 &emsp; 训练时报错`InvalidArgumentError`解决：在训练开头加上`tf.reset_default_graph()`
 
 &emsp; 理解卷积神经网络中的代（`epoch`）、迭代（`iteration`）和批大小（`batchsize`）的关系：[卷积神经网络训练三个概念（epoch，迭代次数，batchsize）](https://blog.csdn.net/qq_37274615/article/details/81147013)
+
+&emsp; 模型训练过程中`batchsize`的选择：[模型训练中batch_size的选择](https://blog.csdn.net/tsq292978891/article/details/86720184)
