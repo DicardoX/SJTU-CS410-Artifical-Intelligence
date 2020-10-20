@@ -33,3 +33,7 @@
 &emsp; 理解卷积神经网络中的代（`epoch`）、迭代（`iteration`）和批大小（`batchsize`）的关系：[卷积神经网络训练三个概念（epoch，迭代次数，batchsize）](https://blog.csdn.net/qq_37274615/article/details/81147013)
 
 &emsp; 模型训练过程中`batchsize`的选择：[模型训练中batch_size的选择](https://blog.csdn.net/tsq292978891/article/details/86720184)
+
+&emsp; 模型训练过程中`learning rate`的变化选择：[【模型训练】如何选择最适合你的学习率变更策略](https://zhuanlan.zhihu.com/p/52608023)
+&emsp; 模型训练过程中`batchsize`的选择：[模型训练中batch_size的选择](https://blog.csdn.net/tsq292978891/article/details/86720184)过程
+&emsp; 模型训练过程中`batchsize`的选择：[模型训练中batch_size的选择](https://blog.csdn.net/tsq292978891/article/details/86720184)
