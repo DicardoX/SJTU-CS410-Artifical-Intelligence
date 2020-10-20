@@ -22,7 +22,8 @@ for dirname, _, filenames in os.walk('/kaggle/input'):
 
 ############################# Environment Settings ##########################################
 
-!pip install tensorflow==1.13.1 # 在使用pip指令前要加!
+!pip install --upgrade pip
+!pip install tensorflow==1.15.0 # 在使用pip指令前要加!
 
 import os
 import numpy as np
@@ -31,7 +32,7 @@ import tensorflow as tf
 
 LR = 0.01
 BatchSize = 50
-EPOCH = 2
+EPOCH = 1
 print(tf.__version__)
 
 
@@ -59,7 +60,7 @@ def load_data(filefolder):
             label_index = 1
         for line in f.readlines():
             line = line.replace('\n', '').split(',')
-            label.append((line[label_index])) # 本来是int(line[label_index])
+            label.append(int(float(line[label_index])))
     label = np.array(label)
     # label = label['Label'].values
     return data, label
@@ -102,6 +103,8 @@ def net(onehots_shape): #[73,398]
         
 ######################## Training #############################      
 
+tf.reset_default_graph() # tf.reset_default_graph函数用于清除默认图形堆栈并重置全局默认图形。 
+
 train_data, train_label = load_data('train')
 valid_data, valid_label = load_data('validation')
 test_data, test_label = load_data('test')
@@ -119,16 +122,16 @@ for epoch in range(EPOCH):
         accuracy_ = 0
         for i in range(0, valid_data.shape[0], BatchSize):
             b_data, b_label = valid_data[i: i+BatchSize], valid_label[i: i+BatchSize]
-            accuracy_ += sess.run(accuracy, {'input:0': b_data, 'label:0': b_label})
+        accuracy_ += sess.run(accuracy, {'input:0': b_data, 'label:0': b_label})
         accuracy_ = accuracy_ * BatchSize / valid_data.shape[0]
-        print('epoch:', epoch, '| train loss: %.4f' % loss_, 'valid accuracy: %.2f' % accuracy_)
+    print('epoch:', epoch, '| train loss: %.4f' % loss_, 'valid accuracy: %.2f' % accuracy_)
 accuracy_ = 0
 
-for i in range(0, test_data.shape[0], BatchSize):
-    b_data, b_label = test_data[i: i+BatchSize], test_label[i: i+BatchSize]
-    accuracy_ += sess.run(accuracy, {'input:0': b_data, 'label:0': b_label})
-accuracy_ = accuracy_ * BatchSize / test_data.shape[0]
-print('test accuracy: %.2f' % accuracy_)
+#for i in range(0, test_data.shape[0], BatchSize):
+#    b_data, b_label = test_data[i: i+BatchSize], test_label[i: i+BatchSize]
+#    accuracy_ += sess.run(accuracy, {'input:0': b_data, 'label:0': b_label})
+#accuracy_ = accuracy_ * BatchSize / test_data.shape[0]
+#print('test accuracy: %.2f' % accuracy_)
         
 saver = tf.train.Saver()
 saver.save(sess, './weights/model')
