@@ -1,7 +1,5 @@
 # Project 1 : Drug Molecular Toxicity Prediction
 
-&emsp; 在`Pycharm`下安装`Tensorflow`环境：[Mac下pycharm如何安装tensorflow](https://blog.csdn.net/flying_1314/article/details/108513373)
-
 &emsp; 使用`Kaggle`平台进行炼丹：[Kaggle使用教程](https://blog.csdn.net/qq_34851605/article/details/108238087)
 
 &emsp; TensorFlow `Keras`官方教程：[Keras中文文档](https://keras.io/zh/) [Keras教程整理](https://www.jianshu.com/p/d02980fd7b54)
@@ -31,3 +29,5 @@
 &emsp; TensorFlow `tf.train.AdamOptimizer().minimize(loss)`函数详解：[tensorflow Optimizer.minimize()和gradient clipping](http://www.mamicode.com/info-detail-2375709.html)
 
 &emsp; 训练时报错`InvalidArgumentError`解决：在训练开头加上`tf.reset_default_graph()`
+
+&emsp; 理解卷积神经网络中的代（`epoch`）、迭代（`iteration`）和批大小（`batchsize`）的关系：[卷积神经网络训练三个概念（epoch，迭代次数，batchsize）](https://blog.csdn.net/qq_37274615/article/details/81147013)
