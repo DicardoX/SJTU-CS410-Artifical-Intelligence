@@ -9,8 +9,8 @@ import numpy as np
 import tensorflow as tf
 import time
 
-LR = 0.01
-BatchSize = 64
+LR = 0.007
+BatchSize = 72
 EPOCH = 10
 print(tf.__version__)
 
@@ -119,8 +119,8 @@ def train_model(lr_ = LR):
             print("Epoch Time(sec): ", dt)
             print("Estimated Time(min): ", round(dt * EPOCH / 60, 1))
     
-        if epoch % 5 == 0:
-            lr_ = lr_ / 1.4
+        if epoch % 10 == 0:
+            lr_ = lr_ / 1.2
         
     accuracy_ = 0
     b_data, b_label = valid_data, valid_label
