@@ -35,3 +35,9 @@
 &emsp; 模型训练过程中`batchsize`的选择：[模型训练中batch_size的选择](https://blog.csdn.net/tsq292978891/article/details/86720184)
 
 &emsp; 模型训练过程中`learning rate`的变化选择：[【模型训练】如何选择最适合你的学习率变更策略](https://zhuanlan.zhihu.com/p/52608023)
+
+&emsp; 模型训练过程中过拟合的解决方案：
+
+ - 调整（适当增大）`Batchsize`
+ 
+ - 使用正则化缓解过拟合：[CNN学习笔记：正则化缓解过拟合](https://www.cnblogs.com/MrSaver/p/10217315.html)
