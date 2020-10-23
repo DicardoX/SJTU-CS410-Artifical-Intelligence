@@ -41,3 +41,5 @@
  - 调整（适当增大）`Batchsize`
  
  - 使用正则化缓解过拟合：[CNN学习笔记：正则化缓解过拟合](https://www.cnblogs.com/MrSaver/p/10217315.html)
+ 
+ - TensorFlow中的损失函数选择：[Tensorflow 中的损失函数 —— loss 专题汇总](https://zhuanlan.zhihu.com/p/44216830)
