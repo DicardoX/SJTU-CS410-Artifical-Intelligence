@@ -5,7 +5,6 @@ import numpy as np # 用于后续计算
 import pandas as pd # 用于读取数据文件
 import matplotlib.pyplot as plt # 用于画图
 
-LR = 0.0003 # 学习率
 EPOCH = 1000 # 迭代次数
 
 # 读取数据文件
