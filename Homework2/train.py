@@ -5,7 +5,8 @@ import numpy as np # 用于后续计算
 import pandas as pd # 用于读取数据文件
 import matplotlib.pyplot as plt # 用于画图
 
-EPOCH = 1000 # 迭代次数
+LR = 0.0003 # 学习率缺省值
+EPOCH = 5000 # 迭代次数
 
 # 读取数据文件
 readIn = pd.read_csv("assignment 2-supp.csv", header=0) # 将csv文件中的数据读入data变量，将第一行作为名称，不读入
@@ -79,6 +80,7 @@ for i in range(1, 5000, 50):
 
     print("Epoch: ", int((i - 1) / 50), "|", "Learning Rate = %.7f" % lr, "|", "Accuracy = %.4f" % accuracy_)
 
+# 绘制Accuracy - Learning Rate关系图
 plt.plot(lrArr, accuracyArr)
 plt.grid(True) # 增加网格点
 plt.title('Accuracy - Learning Rate Graph') # 设置图表标题
@@ -87,5 +89,11 @@ plt.ylabel('Accuracy') # 纵坐标标题
 plt.axis('tight') # 坐标轴紧密排布
 plt.xticks(np.arange(0, 0.0005, 0.0001)) # 设置x轴刻度
 plt.show()
+
+
+
+
+
+
 
 
