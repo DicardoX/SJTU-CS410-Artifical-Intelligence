@@ -24,6 +24,12 @@
  
 ----------------------
 
+## 不同问题下激活函数的选择
+
+[常用激活函数比较](http://www.360doc.com/content/17/0927/09/10408243_690511166.shtml)
+
+-----------------------
+
 ## Mac下`Pycharm`安装`tensorflow`:
 
 &emsp; 直接在pycharm的命令行中输入`pip install tensorflow==[version]`即可。
