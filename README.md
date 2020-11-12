@@ -8,6 +8,10 @@
  
  &emsp; &emsp; 3. `TensorFlow`环境配置
  
+ - Homework1: Search Algorithms
+ 
+ - Homework2: NN & CNN
+ 
  - Project 1: `Drug Molecular Toxicity Prediction`
  
  --------------------
