@@ -6,6 +6,8 @@
 
 [参考链接：卷积层输出大小尺寸计算及 “SAME” 和 “VALID”](https://blog.csdn.net/weixin_37697191/article/details/89527315)
 
+&emsp; 假设`input volume`为`M * N * k`，卷积层有`t`个过滤器，则`output volume`的尺寸一定为`f(M) * f(N) * t`，其中`f()`函数参见参考链接。
+
 ----------------
 
 ## 不同问题下激活函数的选择
