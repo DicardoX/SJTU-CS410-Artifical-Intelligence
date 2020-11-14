@@ -10,7 +10,9 @@
  
  - Homework1: `Search Algorithms`
  
- - Homework2: `NN` & `CNN`
+ - Homework2: 模型评估 + `TensorFlow`搭建简单的逻辑回归模型
+ 
+ - Homework3: `NN` & `CNN`
  
  - Project 1: `Drug Molecular Toxicity Prediction`
  
