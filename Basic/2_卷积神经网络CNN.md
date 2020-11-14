@@ -16,14 +16,20 @@
 
 ----------------------
 
+## 池化层输出大小尺寸计算及参数个数计算
+
+[参考链接：卷积神经网络经过卷积/池化之后的图像尺寸及参数个数以及FLOPs](https://blog.csdn.net/xiaohuihui1994/article/details/83375661)
+
+-----------------------
+
 ## 简单的卷积神经网络 —— `LeNet`
 
-[LeNet详解](https://blog.csdn.net/qq_42570457/article/details/81460807)
+[参考链接：LeNet详解](https://blog.csdn.net/qq_42570457/article/details/81460807)
 
 ------------------------
 
 ## 不同问题下激活函数的选择
 
-[常用激活函数比较](http://www.360doc.com/content/17/0927/09/10408243_690511166.shtml)
+[参考链接：常用激活函数比较](http://www.360doc.com/content/17/0927/09/10408243_690511166.shtml)
 
 -----------------------
