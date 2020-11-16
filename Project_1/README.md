@@ -43,3 +43,5 @@
  - 使用正则化缓解过拟合：[CNN学习笔记：正则化缓解过拟合](https://www.cnblogs.com/MrSaver/p/10217315.html)
  
  - TensorFlow中的损失函数选择：[Tensorflow 中的损失函数 —— loss 专题汇总](https://zhuanlan.zhihu.com/p/44216830)
+ 
+ - `tf.reshape()函数`里`shape = [-1, 28, 28, 1]`的理解： [x = tf.reshape(x, shape=[-1, 28, 28, 1])的理解](https://blog.csdn.net/agent_snail/article/details/105700777?utm_medium=distribute.pc_relevant_t0.none-task-blog-BlogCommendFromMachineLearnPai2-1.add_param_isCf&depth_1-utm_source=distribute.pc_relevant_t0.none-task-blog-BlogCommendFromMachineLearnPai2-1.add_param_isCf)
