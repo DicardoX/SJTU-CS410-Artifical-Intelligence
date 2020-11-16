@@ -5,8 +5,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import time
 
-LR = 0.001 # Learning Rate
-EPOCH = 10 # epoch
+lr = 0.0025 # Learning Rate
+EPOCH = 15 # epoch
 BATCHSIZE = 128 # batch size
 aucArr = [] # 存储AUC Score的数组
 
@@ -56,15 +56,14 @@ label2D = tf.one_hot(label, 2) # 将label矩阵转化成one_hot编码类型的la
 output = myModel(input) # 利用input获取output
 myModel.summary() # 展示模型结构
 
-#bce = tf.keras.losses.BinaryCrossentropy()
-#loss = bce(label, output)
 loss = tf.keras.losses.BinaryCrossentropy()(label2D, output) # 计算损失函数，使用二维one_hot类型的label
-optimizer = tf.train.AdamOptimizer(LR).minimize(loss) # 定义优化器
+optimizer = tf.train.AdamOptimizer(lr).minimize(loss) # 定义优化器
 prediction = tf.placeholder(tf.float64, [None], name='prediction') # 定义预测占位符
 _,aucScore = tf.metrics.auc(labels=label, predictions=prediction) # 计算AUC score，使用shape为(?, )，int32类型的label
 
 ## Running ##
 def run_model():
+    global lr
     init = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer())
     sess = tf.Session()
     sess.run(init)
@@ -72,6 +71,7 @@ def run_model():
     saver = tf.train.Saver() # 创建三个数据文件和一个检查点（Checkpoint）文件，保存模型
     sampleNum = train_X.shape[0]  # 样本数
     bestAuc = 0 # 记录最佳AUC Score
+    worseCount = 0
     print("Model Training...")
     for epoch in range(EPOCH):
         for i in range(0, sampleNum, BATCHSIZE):
@@ -86,12 +86,20 @@ def run_model():
             aucScore_ = sess.run(aucScore, feed_dict=feed_dict) # 运行计算auc score
             aucArr.append(aucScore_) # 将当前auc score存入数组
             print("Epoch:", epoch, '|', "AUC Score:", aucScore_)
+
+            if epoch > 0 and aucScore_ < aucArr[epoch - 1]:
+                worseCount = worseCount + 1
+            elif epoch > 0 and aucScore_ >= aucArr[epoch - 1]:
+                worseCount = 0
+            if worseCount >= 2: # 连续下降两次，返回
+                return
+
             if aucScore_ > bestAuc:
                 saver.save(sess, "./weights/model")
                 bestAuc = aucScore_
 
-        if epoch % 2 == 0:
-            epoch /= 1.2
+        if epoch % 5 == 0: # Learning rate变化函数
+            lr = lr / 1.1
 
 
 run_model()
