@@ -46,11 +46,13 @@
  
  - `tf.reshape()函数`里`shape = [-1, 28, 28, 1]`的理解： [x = tf.reshape(x, shape=[-1, 28, 28, 1])的理解](https://blog.csdn.net/agent_snail/article/details/105700777?utm_medium=distribute.pc_relevant_t0.none-task-blog-BlogCommendFromMachineLearnPai2-1.add_param_isCf&depth_1-utm_source=distribute.pc_relevant_t0.none-task-blog-BlogCommendFromMachineLearnPai2-1.add_param_isCf)
  
+ &emsp; 最后一位对应最小的中括号，数字代表该中括号内有几个元素，其他类似。
+ 
 ```
 z = np.array([[1, 2, 3, 4],
                   [5, 6, 7, 8]])
                   
-Input: Z = z.reshape([-1, 1, 1, 2])
+Input: Z = z.reshape([-1, 1, 1, 2]) 
 Output: 
 [[[[1 2]]]
 
@@ -67,4 +69,30 @@ Output:
 
   [[5 6]
    [7 8]]]]
+   
+Input: Z = z.reshape([-1, 2, 1, 1])
+Output:
+[[[[1]]
+
+  [[2]]]
+
+ [[[3]]
+
+  [[4]]]
+
+Input: Z = z.reshape([-1, 1, 2, 1])
+Output:
+[[[[1]
+   [2]]]
+
+ [[[3]
+   [4]]]
+
+ [[[5]
+   [6]]]
+
+ [[[7]
+   [8]]]]
+
+
 ```
