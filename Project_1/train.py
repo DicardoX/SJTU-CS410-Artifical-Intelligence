@@ -7,7 +7,7 @@ import time
 
 LR = 0.001 # Learning Rate
 EPOCH = 10 # epoch
-BATCHSIZE = 96 # batch size
+BATCHSIZE = 128 # batch size
 aucArr = [] # 存储AUC Score的数组
 
 ## Data Loading ##
