@@ -97,5 +97,11 @@ Output:
 ```
 
 &emsp; `tf.keras`的卷积层正则化实现：[正则化实现方法tf&keras](https://blog.csdn.net/buziran/article/details/102726808)
+
+&emsp; `tf.keras`的`dropout`实现：
+
+```
+self.dropout = tf.keras.layers.Dropout(0.01) # 随机丢弃层
+```
  
  
