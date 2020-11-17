@@ -94,5 +94,8 @@ Output:
  [[[7]
    [8]]]]
 
-
 ```
+
+&emsp; `tf.keras`的卷积层正则化实现：[正则化实现方法tf&keras](https://blog.csdn.net/buziran/article/details/102726808)
+ 
+ 
