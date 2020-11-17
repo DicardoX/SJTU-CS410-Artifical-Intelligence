@@ -4,7 +4,7 @@ import tensorflow as tf
 import pandas as pd
 import matplotlib.pyplot as plt
 
-lr = 0.002 # Learning Rate
+lr = 0.0025 # Learning Rate
 EPOCH = 50 # epoch
 BATCHSIZE = 128 # batch size
 aucArr = [] # 存储AUC Score的数组
@@ -25,21 +25,21 @@ valid_X, valid_Y = load_data('validation') # 验证集，[272, 73, 398]
 ## Neuron Network Building ##
 class Network(tf.keras.Model):
     def __init__(self):
-        #regularizer = tf.contrib.layers.l2_regularizer(0.1)
+        channelNum = 32
+        regularizer = tf.contrib.layers.l2_regularizer(0.05)
         super(Network, self).__init__() # 对继承的父类对象进行初始化，将MyModel类型的对象self转化成tf.keras.Model类型的对象，然后调用其__init__()函数
-        self.dropout = tf.keras.layers.Dropout(rate=0.1) # 随机丢弃层
-        self.conv1 = tf.keras.layers.Conv2D(32, 5, 1, padding='same', activation=tf.nn.relu)#, kernel_regularizer=regularizer)  # 卷积层一
+        self.dropout = tf.keras.layers.Dropout(rate=0.05) # 随机丢弃层
+        self.conv1 = tf.keras.layers.Conv2D(channelNum, 5, 1, padding='same', activation=tf.nn.relu, kernel_regularizer=regularizer)  # 卷积层一
         self.pool1 = tf.keras.layers.MaxPool2D(2, 2) # 池化层一
-        #self.conv2 = tf.keras.layers.Conv2D(32, 3, (1, 2), padding='same', activation=tf.nn.relu) # 卷积层二
-        self.conv2 = tf.keras.layers.Conv2D(32, 3, (1, 2), padding='same', activation=tf.nn.relu)#, kernel_regularizer=regularizer)  # 卷积层二
+        self.conv2 = tf.keras.layers.Conv2D(channelNum, 3, (1, 2), padding='same', activation=tf.nn.relu)  # 卷积层二
         self.pool2 = tf.keras.layers.MaxPool2D(2, 2) #池化层二
         self.fc = tf.keras.layers.Dense(2) #全连接层
 
     def call(self, inputs, training=None, mask=None):
         conv1Res = self.conv1(inputs)
+        dropoutRes = self.dropout(conv1Res)
         pool1Res = self.pool1(conv1Res)
-        dropoutRes = self.dropout(pool1Res)
-        conv2Res = self.conv2(dropoutRes)
+        conv2Res = self.conv2(pool1Res)
         pool2Res = self.pool2(conv2Res)
         flat = tf.reshape(pool2Res, [-1, 18*50*32])
         output = self.fc(flat)
@@ -56,7 +56,7 @@ label = tf.placeholder(tf.int32, [None], name='label') # Tensor("label:0", shape
 label2D = tf.one_hot(label, 2) # 将label矩阵转化成one_hot编码类型的label2D，维数为2，及有两种不同的编码，分别对应label的0和1，Tensor("one_hot:0", shape=(?,2), dtype=float32)
 
 output = myModel(input) # 利用input获取output
-myModel.summary() # 展示模型结构
+#myModel.summary() # 展示模型结构
 
 #regularizer = tf.contrib.layers.l2_regularizer(0.5)(myModel.conv2.weights)
 loss = tf.keras.losses.BinaryCrossentropy()(label2D, output) # 计算损失函数，使用二维one_hot类型的label
