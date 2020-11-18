@@ -15,11 +15,13 @@ def load_test_data(filefolder):
 ## Neuron Network Building ##
 class Network(tf.keras.Model):
     def __init__(self):
+        channelNum = 32
+        #regularizer = tf.contrib.layers.l2_regularizer(0.5)
         super(Network, self).__init__() # 对继承的父类对象进行初始化，将MyModel类型的对象self转化成tf.keras.Model类型的对象，然后调用其__init__()函数
-        self.conv1 = tf.keras.layers.Conv2D(32, 5, 1, padding='same', activation=tf.nn.relu)  # 卷积层一
+        #self.dropout = tf.keras.layers.Dropout(rate=0.05) # 随机丢弃层
+        self.conv1 = tf.keras.layers.Conv2D(channelNum, 5, 1, padding='same', activation=tf.nn.relu)  # 卷积层一
         self.pool1 = tf.keras.layers.MaxPool2D(2, 2) # 池化层一
-        #self.conv2 = tf.keras.layers.Conv2D(32, 3, (1, 2), padding='same', activation=tf.nn.relu) # 卷积层二
-        self.conv2 = tf.keras.layers.Conv2D(32, 3, (1, 2), padding='same', activation=tf.nn.relu)  # 卷积层二
+        self.conv2 = tf.keras.layers.Conv2D(channelNum, 3, (1, 2), padding='same', activation=tf.nn.relu)  # 卷积层二
         self.pool2 = tf.keras.layers.MaxPool2D(2, 2) #池化层二
         self.fc = tf.keras.layers.Dense(2) #全连接层
 
@@ -55,7 +57,7 @@ def predict():
         pred = testOutput[:, 1]
         prediction.extend(list(pred))
     sess.close()
-    f = open('output_518021910698.txt', 'w')
+    f = open('output_518021910698.csv', 'w')
     f.write('Chemical,Label\n')
     for i, v in enumerate(prediction):
         f.write(test_name[i] + ',%f\n' % v)
