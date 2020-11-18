@@ -5,8 +5,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 lr = 0.0025 # Learning Rate
-EPOCH = 50 # epoch
-BATCHSIZE = 128 # batch size
+EPOCH = 7 # epoch
+BATCHSIZE = 64 # batch size
 aucArr = [] # 存储AUC Score的数组
 
 ## Data Loading ##
@@ -28,16 +28,17 @@ class Network(tf.keras.Model):
         channelNum = 32
         regularizer = tf.contrib.layers.l2_regularizer(0.05)
         super(Network, self).__init__() # 对继承的父类对象进行初始化，将MyModel类型的对象self转化成tf.keras.Model类型的对象，然后调用其__init__()函数
-        self.dropout = tf.keras.layers.Dropout(rate=0.05) # 随机丢弃层
+        #self.dropout = tf.keras.layers.Dropout(rate=0.05) # 随机丢弃层
         self.conv1 = tf.keras.layers.Conv2D(channelNum, 5, 1, padding='same', activation=tf.nn.relu, kernel_regularizer=regularizer)  # 卷积层一
         self.pool1 = tf.keras.layers.MaxPool2D(2, 2) # 池化层一
-        self.conv2 = tf.keras.layers.Conv2D(channelNum, 3, (1, 2), padding='same', activation=tf.nn.relu)  # 卷积层二
+        self.conv2 = tf.keras.layers.Conv2D(channelNum, 3, (1, 2), padding='same', activation=tf.nn.relu, kernel_regularizer=regularizer)  # 卷积层二
         self.pool2 = tf.keras.layers.MaxPool2D(2, 2) #池化层二
         self.fc = tf.keras.layers.Dense(2) #全连接层
 
     def call(self, inputs, training=None, mask=None):
         conv1Res = self.conv1(inputs)
-        dropoutRes = self.dropout(conv1Res)
+        #dropoutRes = self.dropout(conv1Res)
+        #pool1Res = self.pool1(dropoutRes)
         pool1Res = self.pool1(conv1Res)
         conv2Res = self.conv2(pool1Res)
         pool2Res = self.pool2(conv2Res)
@@ -58,7 +59,6 @@ label2D = tf.one_hot(label, 2) # 将label矩阵转化成one_hot编码类型的la
 output = myModel(input) # 利用input获取output
 #myModel.summary() # 展示模型结构
 
-#regularizer = tf.contrib.layers.l2_regularizer(0.5)(myModel.conv2.weights)
 loss = tf.keras.losses.BinaryCrossentropy()(label2D, output) # 计算损失函数，使用二维one_hot类型的label
 optimizer = tf.train.AdamOptimizer(lr).minimize(loss) # 定义优化器
 prediction = tf.placeholder(tf.float64, [None], name='prediction') # 定义预测占位符
@@ -94,14 +94,14 @@ def run_model():
                 worseCount = worseCount + 1
             elif epoch > 0 and aucScore_ >= aucArr[epoch - 1]:
                 worseCount = 0
-            if worseCount >= 3: # 连续下降三次，返回
+            if worseCount >= 1: # 连续下降两次，返回
                 return
 
             if aucScore_ > bestAuc:
                 saver.save(sess, "./weights/model")
                 bestAuc = aucScore_
 
-        if epoch % 5 == 0: # Learning rate变化函数
+        if epoch % 2 == 0: # Learning rate变化函数
             lr = lr / 1.1
 
 
