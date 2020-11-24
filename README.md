@@ -8,6 +8,10 @@
  
  &emsp; &emsp; 3. `TensorFlow`环境配置
  
+ &emsp; &emsp; 4. 约束满足问题`CSP`
+ 
+ &emsp; &emsp; 5. 模型优化相关
+ 
  - Homework1: `Search Algorithms`
  
  - Homework2: 模型评估 + `TensorFlow`搭建简单的逻辑回归模型
