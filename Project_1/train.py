@@ -4,8 +4,8 @@ import tensorflow as tf
 import pandas as pd
 import matplotlib.pyplot as plt
 
-lr = 0.0025 # Learning Rate
-EPOCH = 7 # epoch
+lr = 0.00155 # Learning Rate
+EPOCH = 50 # epoch
 BATCHSIZE = 64 # batch size
 aucArr = [] # 存储AUC Score的数组
 
@@ -26,7 +26,7 @@ valid_X, valid_Y = load_data('validation') # 验证集，[272, 73, 398]
 class Network(tf.keras.Model):
     def __init__(self):
         channelNum = 32
-        regularizer = tf.contrib.layers.l2_regularizer(0.05)
+        regularizer = tf.contrib.layers.l2_regularizer(0.01)
         super(Network, self).__init__() # 对继承的父类对象进行初始化，将MyModel类型的对象self转化成tf.keras.Model类型的对象，然后调用其__init__()函数
         #self.dropout = tf.keras.layers.Dropout(rate=0.05) # 随机丢弃层
         self.conv1 = tf.keras.layers.Conv2D(channelNum, 5, 1, padding='same', activation=tf.nn.relu, kernel_regularizer=regularizer)  # 卷积层一
@@ -66,7 +66,7 @@ _,aucScore = tf.metrics.auc(labels=label, predictions=prediction) # 计算AUC sc
 
 ## Running ##
 def run_model():
-    global lr
+    global lr, loss_
     init = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer())
     sess = tf.Session()
     sess.run(init)
@@ -88,21 +88,21 @@ def run_model():
             feed_dict = {prediction: valPrediction, label: valid_Y}
             aucScore_ = sess.run(aucScore, feed_dict=feed_dict) # 运行计算auc score
             aucArr.append(aucScore_) # 将当前auc score存入数组
-            print("Epoch:", epoch, '|', "AUC Score:", aucScore_)
+            print("Epoch:", epoch, '|', "Loss:", loss_, '|', "AUC Score:", aucScore_)
 
             if epoch > 0 and aucScore_ < aucArr[epoch - 1]:
                 worseCount = worseCount + 1
             elif epoch > 0 and aucScore_ >= aucArr[epoch - 1]:
                 worseCount = 0
-            if worseCount >= 1: # 连续下降两次，返回
+            if worseCount >= 10: # 连续下降两次，返回
                 return
 
             if aucScore_ > bestAuc:
                 saver.save(sess, "./weights/model")
                 bestAuc = aucScore_
 
-        if epoch % 2 == 0: # Learning rate变化函数
-            lr = lr / 1.1
+        if epoch % 5 == 0: # Learning rate变化函数
+            lr = lr / 1.06
 
 
 run_model()
