@@ -1,0 +1,464 @@
+\documentclass{article} 
+\usepackage[fleqn]{amsmath}
+\usepackage{graphicx}
+\usepackage{mathrsfs}
+\usepackage{color}
+\usepackage{amssymb}
+\usepackage{amsfonts,amssymb}
+\usepackage{array}
+\usepackage{latexsym}
+\usepackage{tabularx} 
+\usepackage{enumerate}
+\usepackage{multirow}
+
+
+\title{\normalsize
+CS410: Artificial Intelligence 2020 Fall\\
+Homework 4: Constraint Satisfaction Problems\\
+Due date: 23:59:59 (GMT +08:00), December 4, 2020}
+\author{Chunyu Xue 518021910698}
+\date{}
+
+\begin{document} 
+\maketitle
+
+\section{Q1}
+The potluck is coming up and the staff haven’t figured out what to bring yet! They’ve pooled their resources and determined that they can bring some subset of the following items. 
+
+\begin{enumerate}
+    \item Pho
+    \item Apricots
+    \item Frozen Yogurt
+    \item Fried Rice
+    \item Apple Pie
+    \item Animal Crackers
+\end{enumerate}
+
+\noindent There are five people on the course staff: Taylor, Jonathan, Faraz, Brian, and Alvin. Each of them will only bring one item to the potluck.
+
+\begin{enumerate}[i]
+  \item If (F)araz brings the same item as someone else, it cannot be (B)rian.
+  \item (A)lvin has pho-phobia so he won't bring Pho, but he’ll be okay if someone else brings it.
+  \item (B)rian is no longer allowed near a stove, so he can only bring items 2, 3, or 6.
+  \item (F)araz literally can’t even; he won’t bring items 2, 4, or 6.
+  \item (J)onathan was busy, so he didn’t see the last third of the list. Therefore, he will only bring item 1, 2, 3, or 4.
+  \item (T)aylor will only bring an item that is before an item that (J)onathan brings.
+  \item (T)aylor is allergic to animal crackers, so he won’t bring item 6. (If someone else brings it, he’ll just stay away from that table.)
+  \item (F)araz and (J)onathan will only bring items that have the same first letter (e.g. Frozen Yogurt and Fried Rice).
+  \item (B)rian will only bring an item that is after an item that (A)lvin brings on the list.
+  \item (J)onathan and (T)aylor want to be unique; they won’t bring the same item as anyone else.
+\end{enumerate}
+
+\noindent Questions \\
+
+\noindent (a) Which of the listed constraints are unary constraints? \\
+
+\textbf{Answer:} Constraint $2$, $3$, $4$, $5$, $7$ are unary constraints.
+
+~\\ 
+
+\noindent (b) Rewrite implicit constraint viii. as an explicit constraint. \\
+
+\textbf{Answer:} 
+\begin{equation}\tag{$1$}
+    \begin{aligned}
+        (F, J) \in \{(3, 4), (4, 3), (2, 5), (5, 2), (2, 6), (6, 2), (5, 6), (6, 5),\\ 
+        (1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6)\}
+    \end{aligned}
+\end{equation}
+
+~\\
+
+\noindent (c) Please draw the constraint graph for this CSP. How many edges are there in this constraint graph?
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=4.5cm,height=4cm]{pictures/Q1Answer1.jpeg}
+\end{figure}
+
+Totally $9$ edges in this constraint graph.
+
+~\\
+
+\newpage
+
+\noindent (d) The table below shows the variable domains after all unary constraints have been enforced.
+
+\renewcommand\arraystretch{2}
+\begin{table}[tbh!]
+\begin{center}
+    \begin{tabular}{|p{1cm}| p{1cm}| p{1cm} | p{1cm}| p{1cm}| p{1cm}| p{1cm}|}
+\hline
+    A &  & 2 & 3 & 4 & 5 & 6  \\ \hline
+    B &  & 2 & 3 &   &   & 6  \\ \hline
+    F & 1 &  & 3 &   & 5 &   \\ \hline
+    J & 1 & 2 & 3 & 4  &  &   \\ \hline
+    T & 1 & 2 & 3 & 4  & 5 &   \\ \hline
+\end{tabular}
+\end{center}
+\end{table}
+
+\noindent Following the Minimum Remaining Values heuristic, which variable should we assign first? Break all ties alphabetically.\\
+\indent ~~~~~ A $\bigcirc$ ~~~~~~~~~  B $\bigcirc$ ~~~~~~~~~  F $\bigcirc$ ~~~~~~~~~  J $\bigcirc$ ~~~~~~~~~  T $\bigcirc$
+~\\
+
+\textbf{Answer:} B.
+
+~\\
+
+\noindent (e) To decouple this from the previous question, assume that we choose to assign (F)araz first. In this question, we will choose which value to assign to using the Least Constraining Value method.\\
+
+
+\noindent To determine the number of remaining values, enforce arc consistency to prune the domains. Then, count the total number of possible assignments (\textbf{not} the total number of remaining values). It may help you to enforce arc consistency twice, once before assigning values to (F)araz, and then again after assigning a value.\\
+
+
+\noindent The domains after enforcing unary constraints are reproduced in each subquestion. \textbf{Please delete elements from the grids and write numbers in the blanks}. 
+\newpage
+
+\noindent(e.i) Assigning F = $1$ results in $0$ possible assignments. \\
+\noindent The possible assignments are: \\
+\renewcommand\arraystretch{1.5}
+\begin{table}[tbh!]
+\begin{center}
+    \begin{tabular}{|p{1cm}| p{1cm}| p{1cm} | p{1cm}| p{1cm}| p{1cm}| p{1cm}|}
+\hline
+    A &  & 2 & 3 & 4 & 5 & 6  \\ \hline
+    B &  & 2 & 3 &   &   & 6  \\ \hline
+    F & 1 &  & 3 &   & 5 &   \\ \hline
+    J & 1 & 2 & 3 & 4  &  &   \\ \hline
+    T & 1 & 2 & 3 & 4  & 5 &   \\ \hline
+\end{tabular}
+\end{center}
+\end{table}
+
+Therefore, assign $F=1$ will leave no possible values in J's domain. \\
+
+\noindent(e.ii) Assigning F = $3$ results in $5$ possible assignments.\\
+\noindent The possible assignments are: \\
+\renewcommand\arraystretch{1.5}
+\begin{table}[tbh!]
+\begin{center}
+    \begin{tabular}{|p{1cm}| p{1cm}| p{1cm} | p{1cm}| p{1cm}| p{1cm}| p{1cm}|}
+\hline
+    A &  & 2 & 3 & 4 & 5 & 6  \\ \hline
+    B &  & 2 & 3 &   &   & 6  \\ \hline
+    F & 1 &  & 3 &   & 5 &   \\ \hline
+    J & 1 & 2 & 3 & 4  &  &   \\ \hline
+    T & 1 & 2 & 3 & 4  & 5 &   \\ \hline
+\end{tabular}
+\end{center}
+\end{table}
+
+The $5$ possible assignments are $(2, 6, 3, 4, 1), (3, 6, 3, 4, 1), (5, 6, 3, 4, 1), \\ (3, 6, 3, 4, 2), (5, 6, 3, 4, 2)$ \\
+
+\noindent(e.iii) Assigning F = $5$ results in $3$ possible assignments.\\
+\noindent The possible assignments are: \\
+\renewcommand\arraystretch{1.5}
+\begin{table}[tbh!]
+\begin{center}
+    \begin{tabular}{|p{1cm}| p{1cm}| p{1cm} | p{1cm}| p{1cm}| p{1cm}| p{1cm}|}
+\hline
+    A &  & 2 & 3 & 4 & 5 & 6  \\ \hline
+    B &  & 2 & 3 &   &   & 6  \\ \hline
+    F & 1 &  & 3 &   & 5 &   \\ \hline
+    J & 1 & 2 & 3 & 4  &  &   \\ \hline
+    T & 1 & 2 & 3 & 4  & 5 &   \\ \hline
+\end{tabular}
+\end{center}
+\end{table}
+
+The $3$ possible assignments are $ (3, 6, 5, 2, 1), (4, 6, 5, 2, 1), (5, 6, 5, 2, 1)$
+
+\noindent(e.iv) Using the LCV method, which value should we assign to F? If there is a tie, choose the lower number. (e.g. If both 1 and 2 have the same value, then fill 1.)\\
+\indent ~~~~~ 1 $\bigcirc$ ~~~~~~~~~  2 $\bigcirc$ ~~~~~~~~~  3 $\bigcirc$ ~~~~~~~~~  4 $\bigcirc$ ~~~~~~~~~  5 $\bigcirc$~~~~~~~~~  6 $\bigcirc$ \\
+
+\textbf{Answer:} 3.
+
+\newpage
+\section{Q2.Worst-Case Backtracking}
+Consider solving the following CSP with standard backtracking search where we enforce arc consistency of all arcs before every variable assignment. Assume every variable in the CSP has a domain size $d > 1$.
+\begin{figure}[h]
+\centering
+\includegraphics[width=4.5cm,height=2.8cm]{pictures/illu1.png}
+\end{figure}
+
+\noindent (a) For each of the variable orderings, mark the variables for which backtracking search (with arc consistency checking) could end up considering more than one different value during the search and \textbf{explain why}.\\
+
+
+\noindent (a.i) Ordering: A, B, C, D, E, F \\
+\indent ~~~~~ A $\bigcirc$ ~~~~~~~~~  B $\bigcirc$ ~~~~~~~~~  C $\bigcirc$ ~~~~~~~~~  D $\bigcirc$ ~~~~~~~~~  E $\bigcirc$~~~~~~~~~  F $\bigcirc$ \\
+
+\textbf{Answer:} A, B.
+
+~\\
+
+\noindent (a.ii) Ordering: B, D, F, E, C, A \\
+\indent ~~~~~ A $\bigcirc$ ~~~~~~~~~  B $\bigcirc$ ~~~~~~~~~  C $\bigcirc$ ~~~~~~~~~  D $\bigcirc$ ~~~~~~~~~  E $\bigcirc$~~~~~~~~~  F $\bigcirc$ \\
+
+\textbf{Answer:} B.  \\
+
+\textbf{Explanation:} Due to we have enforced arc consistency before every value assignment, we can ensure that we won’t need backtrack only when our remaining variables are in the form of tree structure. For $(a.i)$, when C, D, E, F can form a tree after we assign A and B. For $(a.ii)$, when B is assigned, D, F, E, C, A can form a tree.
+
+~\\
+
+\noindent (b) Now assume that an adversary gets to observe which variable ordering you are using, and after doing so, gets to choose to add one additional binary constraint between any pair of variables in the CSP in order to maximize the number of variables that backtracking could occur in the worst case. For each of the following variable orderings, select which additional binary constraint should the adversary add and \textbf{explain why}. Then, mark the variables for which backtracking search (with arc consistency checking) could end up considering more than one different value during the search when solving the modified CSP. \\
+
+\noindent (b.i) Ordering: A, B, C, D, E, F\\
+
+The adversary should add the additional binary constraint:\\
+\indent ~~~~~ AC $\bigcirc$ ~~~~~~~~~  AE $\bigcirc$ ~~~~~~~~~  AF $\bigcirc$ ~~~~~~~~~  BD $\bigcirc$  \\
+\indent ~~~~~ BF $\bigcirc$ ~~~~~~~~~  CD $\bigcirc$ ~~~~~~~~~  CE $\bigcirc$ ~~~~~~~~~  DF $\bigcirc$  \\
+
+\textbf{Answer:} DF. \\
+
+When solving the modified CSP with this ordering, backtracking might occur at the following variable(s):\\
+\indent ~~~~~ A $\bigcirc$ ~~~~~~~~~  B $\bigcirc$ ~~~~~~~~~  C $\bigcirc$ ~~~~~~~~~  D $\bigcirc$ ~~~~~~~~~  E $\bigcirc$~~~~~~~~~  F $\bigcirc$ \\
+
+\textbf{Answer:} A, B, C, D. \\
+
+\textbf{Explanation:} After adding edge DF, we can notice that we must assign A, B, C, D to form a tree, which is the biggest size of variables that backtracking could occur in the worst case. \\
+
+\noindent (b.ii) Ordering: B, D, F, E, C, A\\
+
+The adversary should add the additional binary constraint:\\
+\indent ~~~~~ AC $\bigcirc$ ~~~~~~~~~  AE $\bigcirc$ ~~~~~~~~~  AF $\bigcirc$ ~~~~~~~~~  BD $\bigcirc$  \\
+\indent ~~~~~ BF $\bigcirc$ ~~~~~~~~~  CD $\bigcirc$ ~~~~~~~~~  CE $\bigcirc$ ~~~~~~~~~  DF $\bigcirc$  \\
+
+
+\textbf{Answer:} CE. \\
+
+When solving the modified CSP with this ordering, backtracking might occur at the following variable(s):\\
+\indent ~~~~~ A $\bigcirc$ ~~~~~~~~~  B $\bigcirc$ ~~~~~~~~~  C $\bigcirc$ ~~~~~~~~~  D $\bigcirc$ ~~~~~~~~~  E $\bigcirc$~~~~~~~~~  F $\bigcirc$ \\
+
+\textbf{Answer:} B, D, F. \\
+
+\textbf{Explanation:} After adding edge CE, we can notice that we must assign B, D, F to form a tree, which is the biggest size of variables that backtracking could occur in the worst case. \\
+
+\newpage
+
+\section{Q3}
+The final exam of course Artificail Intelligence is coming up, and the course staff has yet to write the test. There are a total of 6 questions on the exam and each question will cover a topic. Here is the format of the exam:
+\begin{itemize}
+    \item q1. Search
+    \item q2. Machine Learning Basics
+    \item q3. Logistic Regression
+    \item q4. Neural Networks
+    \item q5. Convolutional Neural Networks
+    \item q6. CSPs
+\end{itemize}
+
+There are 7 people on the course staff: Brad, Donahue, Ferguson, Judy, Kyle, Michael, and Nick. Each of them is responsible to work with the director on one question. (But a question could end up having more than one staff person, or potentially zero staff assigned to it.) However, the staff are pretty quirky and want the following constraints to be satisfied:
+
+\begin{enumerate}[i]
+  \item Donahue (D) will not work on a question together with Judy (J).
+  \item Kyle (K) must work on either Search, Machine Learning Basics or Logistic Regression
+  \item Michael (M) is very odd, so he can only contribute to an odd-numbered question.
+  \item Nick (N) must work on a question that’s before Michael (M)’s question.
+  \item Kyle (K) must work on a question that’s before Donahue (D)’s question.
+  \item Brad (B) must work on Convolutional Neural Networks.
+  \item Judy (J) must work on a question that’s after Nick (N)’s question.
+  \item If Brad (B) is to work with someone, it cannot be with Nick (N).
+  \item Nick (N) cannot work on question 6.
+  \item Ferguson (F) cannot work on questions 4, 5, or 6
+  \item Donahue (D) cannot work on question 5.
+  \item Donahue (D) must work on a question before Ferguson (F)’s question.
+\end{enumerate}
+\newpage
+
+\noindent (a) We will model this problem as a constraint satisfaction problem (CSP). Our variables correspond to each of the staff members, J, F, N, D, M, B, K, and the domains are the questions 1, 2, 3, 4, 5, 6. After applying the unary constraints, what are the resulting domains of each variable? (You can delete elements from the following grid and wirte the result on the leftside of the grid)
+
+\renewcommand\arraystretch{1.5}
+\begin{table}[tbh!]
+\begin{center}
+    \begin{tabular}{|p{0.5cm}| p{0.5cm}| p{0.5cm} | p{0.5cm}| p{0.5cm}| p{0.5cm}| p{0.5cm}|}
+\hline
+    B & 1 & 2 & 3 & 4 & 5 & 6  \\ \hline
+    D & 1 & 2 & 3 & 4 & 5 & 6  \\ \hline
+    F & 1 & 2 & 3 & 4 & 5 & 6  \\ \hline
+    J & 1 & 2 & 3 & 4 & 5 & 6  \\ \hline
+    K & 1 & 2 & 3 & 4 & 5 & 6  \\ \hline
+    N & 1 & 2 & 3 & 4 & 5 & 6  \\ \hline
+    M & 1 & 2 & 3 & 4 & 5 & 6  \\ \hline
+\end{tabular}
+\end{center}
+\end{table}
+
+\textbf{Answer:} The remain values in domain is:
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=12cm,height=6cm]{pictures/table.png}
+\end{figure}
+
+
+\noindent (b) If we apply the Minimum Remaining Value (MRV) heuristic, which variable should be assigned first? \\
+
+\textbf{Answer:}  Brad, who has the least values in his domain.
+
+~\\
+
+\noindent (c) Normally we would now proceed with the variable you found in (b), but to decouple this question from the previous one (and prevent potential errors from propagating), let’s proceed with assigning Michael first. For value ordering we use the Least Constraining Value (LCV) heuristic, where we use Forward Checking to compute the number of remaining values in other variables domains. What ordering of values is prescribed by the LCV heuristic? Include your work—i.e., include the resulting filtered domains that are different for the different values.\\
+
+\textbf{Answer:} The assign order of Michael will be 5, 3, 1, since these are the only feasible variables and are in increasing order of the number of constraints on each variable. Only Nick's domain is affected by forward checking on these assignments, which will change from $\{1, 2, 3, 4, 5\} $ to $ \{1, 2, 3, 4\}, \{1, 2\}, \{\}$ for assignment 5, 3, and 1 respectively.
+
+~\\
+
+\noindent (d) Realizing this is a tree-structured CSP, we decide not to run backtracking search, and instead use the efficient two-pass algorithm to solve tree-structured CSPs. We will run this two-pass algorithm \textbf{after} applying the unary constraints from part (a). Below is the linearized version of the tree-structured CSP graph for you to work with. \\
+
+
+\noindent (d.i) First Pass: Domain Pruning. Pass from right to left to perform Domain Pruning. Write the values that remain in each domain below each node in the figure above.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=12cm,height=4cm]{pictures/illu2.png}
+\end{figure}
+
+\textbf{Answer:} 
+
+\begin{itemize}
+    \item Kyle: 1
+    
+    \item Donahue: 1, 2
+    
+    \item Ferguson: 1,2,3
+    
+    \item Judy: 2,3,4,5,6
+
+    \item Nick: 1,2,3,4
+
+    \item Brad: 5
+
+    \item Michael: 1,3,5
+\end{itemize}
+
+~\\
+
+\noindent (d.ii) Second Pass: Find Solution. Pass from left to right, assigning values for the solution. If there is more than one possible assignment, choose the highest value.
+
+\begin{itemize}
+    \item Kyle: 1
+    
+    \item Donahue: 2
+    
+    \item Ferguson: 3
+    
+    \item Judy: 6
+
+    \item Nick: 4
+
+    \item Brad: 5
+
+    \item Michael: 5
+\end{itemize}
+
+
+\newpage
+
+\section{Q4}
+\noindent The graph below is a constraint graph for a CSP that has only binary constraints. Initially, no variables have been assigned.\\
+
+
+\noindent For each of the following scenarios, \textbf{mark} all variables for which the specified filtering might result in their domain being changed and \textbf{give your reasons}.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=6cm,height=3cm]{pictures/illu3.png}
+\end{figure}
+~\\
+
+\noindent (a) A value is assigned to A. Which domains might be changed as a result of running forward checking for A? \\
+\indent ~~~~~ A $\bigcirc$ ~~~~~~~~~  B $\bigcirc$ ~~~~~~~~~  C $\bigcirc$ ~~~~~~~~~  D $\bigcirc$ ~~~~~~~~~  E $\bigcirc$~~~~~~~~~  F $\bigcirc$ \\
+
+\textbf{Answer:} B, C, D. \\
+
+\textbf{Explanation:} We only consider edges $A \leftarrow B$, $A \leftarrow C$, $A \leftarrow D$, which are with the head of $A$. Enforcing these arcs will change the domains of the tails.
+
+~\\
+
+\noindent (b) A value is assigned to A, and then forward checking is run for A. Then a value is assigned to B. Which domains might be changed as a result of running forward checking for B? \\
+\indent ~~~~~ A $\bigcirc$ ~~~~~~~~~  B $\bigcirc$ ~~~~~~~~~  C $\bigcirc$ ~~~~~~~~~  D $\bigcirc$ ~~~~~~~~~  E $\bigcirc$~~~~~~~~~  F $\bigcirc$ \\
+
+\textbf{Answer:} C, E. \\
+
+\textbf{Explanation:} We only consider edges $B \leftarrow A$, $B \leftarrow C$, $B \leftarrow E$, which are with the head of $B$. Enforcing these arcs will change the domains of the tails except $A$, which has already be assigned.
+
+~\\
+
+\noindent (c) A value is assigned to A. Which domains might be changed as a result of enforcing arc consistency after this assignment? \\
+\indent ~~~~~ A $\bigcirc$ ~~~~~~~~~  B $\bigcirc$ ~~~~~~~~~  C $\bigcirc$ ~~~~~~~~~  D $\bigcirc$ ~~~~~~~~~  E $\bigcirc$~~~~~~~~~  F $\bigcirc$ \\
+
+\textbf{Answer:} B, C, D, E, F. \\
+
+\textbf{Explanation:} As we know, enforcing arc consistency can affect any unassigned variable in the graph that has a path to the assigned variable. This is because a change to the domain of X results in enforcing all arcs where X is the head, so changes propagate through the graph. Note that the only time in which the domain for A changes is if any domain becomes empty, in which case the arc consistency algorithm usually returns immediately and backtracking is required, so it does not really make sense to consider new domains in this case.
+
+~\\
+
+\noindent (d) A value is assigned to A, and then arc consistency is enforced. Then a value is assigned to B. Which domains might be changed as a result of enforcing arc consistency after the assignment to B? \\
+\indent ~~~~~ A $\bigcirc$ ~~~~~~~~~  B $\bigcirc$ ~~~~~~~~~  C $\bigcirc$ ~~~~~~~~~  D $\bigcirc$ ~~~~~~~~~  E $\bigcirc$~~~~~~~~~  F $\bigcirc$ \\
+
+\textbf{Answer:} C, E, F. \\
+
+\textbf{Answer:} Since A has already been assigned and its domain won't change, edge $A \leftarrow D$ will never be enforced, which means D's domain won't change.
+
+~\\
+
+\newpage
+\section{Q5. Local Search}
+This question asks about Simulated Annealing local search. In the value landscape cartoon below, you will be asked about the probability that various moves will be accepted at different temperatures. Recall that Simulated Annealing always accepts a better move ($\Delta$Value = Value[next] $-$ Value[current]$>$0); but it accepts a worse move ($\Delta$Value $<$ 0) only with probability $e^{\Delta\text{Value}/T}$, where $T$ is the current temperature on the temperature schedule.
+
+Please use this temperature schedule (usually, it is a decaying exponential; but it is simplified here):
+\renewcommand\arraystretch{1.5}
+\begin{table}[tbh!]
+\begin{center}
+    \begin{tabular}{|p{2.5cm}| p{1.5cm}| p{1.5cm} | p{1.5cm}|}
+\hline
+    time(t) & 1-100 & 101-200 & 201-300  \\ \hline
+    Temperature(T) & 10.0 & 1.0 & 0.1  \\ \hline
+\end{tabular}
+\end{center}
+\end{table}
+
+The values given have been chosen to follow this table:
+\renewcommand\arraystretch{1.5}
+\begin{table}[tbh!]
+\begin{center}
+    \begin{tabular}{|p{2.5cm}| p{1.5cm}| p{1.5cm} | p{1.5cm}|p{1.5cm}| p{1.5cm} | p{1.5cm}|}
+\hline
+    $x$ & 0.0 & -0.1 & -0.4               &-1.0       &-4.0        &-40.0\\ \hline
+    $e^x$ & 1.0 & $\approx$0.90 & $\approx$0.67 &$\approx$0.37 & $\approx$0.02  & $\approx$4.0e-18\\ \hline
+\end{tabular}
+\end{center}
+\end{table}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=14cm,height=7cm]{pictures/illu4.png}
+\end{figure}
+~\\
+
+\newpage
+
+\noindent Give your answer to two significant decimal places. The first one is done for you as an example. \\
+
+
+\noindent (a) (example) You are at Point A and t=23. The probability you will accept a move A $\to$ B = 0.37  \\
+
+\noindent (b)  You are at Point B and t=23. The probability you will accept a move B $\to$ C = 1.00  \\
+
+\noindent (c) You are at Point C and t=123. The probability you will accept a move C $\to$ B = 4.0e-18 \\
+
+\noindent (d) You are at Point C and t=123. The probability you will accept a move C $\to$ D = 0.37 \\
+
+\noindent (e) You are at Point E and t=123. The probability you will accept a move E $\to$ D = 0.02 \\
+
+\noindent (f) You are at Point E and t=123. The probability you will accept a move E $\to$ F = 0.90 \\
+
+\noindent (g) You are at Point G and t=123. The probability you will accept a move G $\to$ F = 0.67 \\
+
+\noindent (h) You are at Point G and t=223. The probability you will accept a move G $\to$ F =  0.02 \\
+
+\noindent (i) With a very, very, very long slow annealing schedule, are you more likely, eventually in the long run,
+to wind up at point A or at point G? (write A or G)  G .
+
+
+\end{document} 
