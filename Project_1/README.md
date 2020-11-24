@@ -38,7 +38,7 @@
 
 &emsp; 模型训练过程中过拟合的解决方案：
 
- - 调整（适当增大）`Batchsize`
+ - 调整`Batchsize` [怎么选取训练神经网络时的Batch size?](https://www.zhihu.com/question/61607442)
  
  - 使用正则化缓解过拟合：[CNN学习笔记：正则化缓解过拟合](https://www.cnblogs.com/MrSaver/p/10217315.html)
  
