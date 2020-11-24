@@ -26,7 +26,7 @@
 
 &emsp; TensorFlow `tf.losses.softmax_cross_entropy()`函数参数解释：[tf.losses.softmax_cross_entropy()及相邻函数中weights参数的设置](https://blog.csdn.net/weixin_42561002/article/details/87802096)
 
-&emsp; TensorFlow `tf.train.AdamOptimizer().minimize(loss)`函数详解：[tensorflow Optimizer.minimize()和gradient clipping](http://www.mamicode.com/info-detail-2375709.html)
+&emsp; TensorFlow `tf.train.AdamOptimizer().minimize(loss)`函数详解：可以自动进行学习率的衰减更新。 [tensorflow Optimizer.minimize()和gradient clipping](http://www.mamicode.com/info-detail-2375709.html)
 
 &emsp; 训练时报错`InvalidArgumentError`解决：在训练开头加上`tf.reset_default_graph()`
 
