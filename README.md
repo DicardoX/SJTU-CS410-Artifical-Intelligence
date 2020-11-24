@@ -14,6 +14,8 @@
  
  - Homework3: `NN` & `CNN`
  
+ - Homework4: `CSP` (`Constraint Satisfaction Problems`)
+ 
  - Project 1: `Drug Molecular Toxicity Prediction`
  
  --------------------
