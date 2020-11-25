@@ -3,7 +3,8 @@ import tensorflow as tf
 import numpy as np
 import pandas as pd
 import random
-BatchSize = 50
+dropout_prob = 0.1
+BatchSize = 64
 
 def load_test_data(filefolder):
     filefolder = './data/' + filefolder
@@ -16,9 +17,9 @@ def load_test_data(filefolder):
 class Network(tf.keras.Model):
     def __init__(self):
         channelNum = 32
-        #regularizer = tf.contrib.layers.l2_regularizer(0.5)
+        #regularizer = tf.contrib.layers.l2_regularizer(0.5)                验证集是否加正则化无影响，因为不更新网络
         super(Network, self).__init__() # 对继承的父类对象进行初始化，将MyModel类型的对象self转化成tf.keras.Model类型的对象，然后调用其__init__()函数
-        #self.dropout = tf.keras.layers.Dropout(rate=0.05) # 随机丢弃层
+        #self.dropout = tf.keras.layers.Dropout(rate=dropout_prob) # 随机丢弃层
         self.conv1 = tf.keras.layers.Conv2D(channelNum, 5, 1, padding='same', activation=tf.nn.relu)  # 卷积层一
         self.pool1 = tf.keras.layers.MaxPool2D(2, 2) # 池化层一
         self.conv2 = tf.keras.layers.Conv2D(channelNum, 3, (1, 2), padding='same', activation=tf.nn.relu)  # 卷积层二
@@ -27,10 +28,13 @@ class Network(tf.keras.Model):
 
     def call(self, inputs, training=None, mask=None):
         conv1Res = self.conv1(inputs)
+        #dropoutRes = self.dropout(conv1Res)
+        #pool1Res = self.pool1(dropoutRes)
         pool1Res = self.pool1(conv1Res)
+        #bnRes = tf.layers.batch_normalization(inputs=conv1Res, training=False)  # Batch Normalization层
         conv2Res = self.conv2(pool1Res)
         pool2Res = self.pool2(conv2Res)
-        flat = tf.reshape(pool2Res, [-1, 18*50*32])
+        flat = tf.reshape(pool2Res, [-1, 18 * 50 * 32])
         output = self.fc(flat)
         output = tf.nn.softmax(output)
         return output
