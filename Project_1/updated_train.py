@@ -8,7 +8,7 @@ lr = 3e-4 # Best learning rate for Adam optimizer
 #lr = 0.001
 dropout_rate = 0.01
 EPOCH = 1000 # epoch
-BATCHSIZE = 64 # batch size
+BATCHSIZE = 32 # batch size
 aucArr = [] # 存储AUC Score的数组
 
 ## Data Loading ##
@@ -28,7 +28,7 @@ valid_X, valid_Y = load_data('validation') # 验证集，[272, 73, 398]
 class Network(tf.keras.Model):
     def __init__(self):
         channelNum = 32
-        regularizer = tf.contrib.layers.l2_regularizer(0.1)
+        regularizer = tf.contrib.layers.l2_regularizer(0.5)
         super(Network, self).__init__() # 对继承的父类对象进行初始化，将MyModel类型的对象self转化成tf.keras.Model类型的对象，然后调用其__init__()函数
         #self.dropout = tf.keras.layers.Dropout(rate=dropout_rate) # 随机丢弃层
         self.conv1 = tf.keras.layers.Conv2D(channelNum, 5, 1, padding='same', activation=tf.nn.relu, kernel_regularizer=regularizer)  # 卷积层一
@@ -116,7 +116,7 @@ def run_model():
             if worseCount >= 1:         # 验证集loss下降一次，学习率减半
                 lr = lr / 2
 
-            if worseCount >= 5:         # 验证集loss连续下降四次，early stop
+            if worseCount >= 2:         # 验证集loss连续下降两次，early stop
                 return
 
             #if aucScore_ > bestAuc:
