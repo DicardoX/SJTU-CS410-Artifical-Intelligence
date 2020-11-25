@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import random
 dropout_prob = 0.1
-BatchSize = 64
+BatchSize = 64              # 对预测结果无影响
 
 def load_test_data(filefolder):
     filefolder = './data/' + filefolder
