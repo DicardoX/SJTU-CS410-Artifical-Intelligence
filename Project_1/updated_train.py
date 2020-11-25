@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 
 lr = 3e-4 # Best learning rate for Adam optimizer
 #lr = 0.001
+dropout_rate = 0.01
 EPOCH = 1000 # epoch
 BATCHSIZE = 64 # batch size
 aucArr = [] # 存储AUC Score的数组
@@ -27,9 +28,9 @@ valid_X, valid_Y = load_data('validation') # 验证集，[272, 73, 398]
 class Network(tf.keras.Model):
     def __init__(self):
         channelNum = 32
-        regularizer = tf.contrib.layers.l2_regularizer(0.01)
+        regularizer = tf.contrib.layers.l2_regularizer(0.1)
         super(Network, self).__init__() # 对继承的父类对象进行初始化，将MyModel类型的对象self转化成tf.keras.Model类型的对象，然后调用其__init__()函数
-        #self.dropout = tf.keras.layers.Dropout(rate=0.05) # 随机丢弃层
+        #self.dropout = tf.keras.layers.Dropout(rate=dropout_rate) # 随机丢弃层
         self.conv1 = tf.keras.layers.Conv2D(channelNum, 5, 1, padding='same', activation=tf.nn.relu, kernel_regularizer=regularizer)  # 卷积层一
         self.pool1 = tf.keras.layers.MaxPool2D(2, 2) # 池化层一
         self.conv2 = tf.keras.layers.Conv2D(channelNum, 3, (1, 2), padding='same', activation=tf.nn.relu, kernel_regularizer=regularizer)  # 卷积层二
@@ -38,8 +39,9 @@ class Network(tf.keras.Model):
 
     def call(self, inputs, training=None, mask=None):
         conv1Res = self.conv1(inputs)
-        #dropoutRes = self.dropout(conv1Res)
+        #dropoutRes = self.dropout(conv1Res, training=True)
         #pool1Res = self.pool1(dropoutRes)
+        #bnRes = tf.layers.batch_normalization(inputs=conv1Res, training=True)  # Batch Normalization层
         pool1Res = self.pool1(conv1Res)
         conv2Res = self.conv2(pool1Res)
         pool2Res = self.pool2(conv2Res)
@@ -62,13 +64,16 @@ output = myModel(input) # 利用input获取output
 
 loss = tf.keras.losses.BinaryCrossentropy()(label2D, output) # 计算损失函数，使用二维one_hot类型的label
 
+#update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
+#with tf.control_dependencies(update_ops):
 optimizer = tf.train.AdamOptimizer(lr).minimize(loss) # 定义优化器
+
 prediction = tf.placeholder(tf.float64, [None], name='prediction') # 定义预测占位符
 _,aucScore = tf.metrics.auc(labels=label, predictions=prediction) # 计算AUC score，使用shape为(?, )，int32类型的label
 
 ## Running ##
 def run_model():
-    global lr, loss_
+    global lr, loss_, dropout_rate
     init = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer())
     sess = tf.Session()
     sess.run(init)
@@ -82,6 +87,7 @@ def run_model():
     for epoch in range(EPOCH):
         for i in range(0, sampleNum, BATCHSIZE):
             b_X, b_Y = train_X[i: i + BATCHSIZE], train_Y[i: i + BATCHSIZE]
+            #dropout_rate = 0.01                  # 设置dropout rate
             feed_dict = {'input:0': b_X, 'label:0': b_Y}
             _, loss_ = sess.run([optimizer, loss], feed_dict=feed_dict)
         print("Epoch:", epoch, '|', "Train loss:", loss_)
@@ -90,11 +96,12 @@ def run_model():
         #    lr /= 2
 
         if epoch % 5 == 0:
+            #dropout_rate = 0                    # 在验证集中关闭dropout
             valPrediction = sess.run(output, {'input:0': valid_X})
             valPrediction = valPrediction[:, 1] # 在全部数组（维）中取第1个数据，及所有集合的第1个数据
             feed_dict = {prediction: valPrediction, label: valid_Y}
             aucScore_ = sess.run(aucScore, feed_dict=feed_dict) # 运行计算auc score
-            feed_dict = {'input:0': valid_X, 'label:0': valid_Y}
+            feed_dict = {'input:0': valid_X, 'label:0':valid_Y}
             valid_loss_ = sess.run(loss, feed_dict=feed_dict)
             aucArr.append(aucScore_) # 将当前auc score存入数组
             print("------------------------------------------------------------")
@@ -106,7 +113,10 @@ def run_model():
             else:
                 worseCount = 0
 
-            if worseCount >= 4:         # 验证集loss连续下降四次，early stop
+            if worseCount >= 1:         # 验证集loss下降一次，学习率减半
+                lr = lr / 2
+
+            if worseCount >= 5:         # 验证集loss连续下降四次，early stop
                 return
 
             #if aucScore_ > bestAuc:
@@ -116,6 +126,10 @@ def run_model():
                 bestValidLoss = valid_loss_ # 更新最低验证集loss
                 #bestAuc = aucScore_ # 更新最佳auc score
                 saver.save(sess, "./weights/model") # 保证保存的结果是过拟合发生之前
+
+            #if aucScore_ > bestAuc:
+            #    bestAuc = aucScore_  # 更新最佳auc score
+            #    saver.save(sess, "./weights2/model")
 
 
 run_model()
