@@ -101,7 +101,7 @@ def run_model():
             valPrediction = valPrediction[:, 1] # 在全部数组（维）中取第1个数据，及所有集合的第1个数据
             feed_dict = {prediction: valPrediction, label: valid_Y}
             aucScore_ = sess.run(aucScore, feed_dict=feed_dict) # 运行计算auc score
-            feed_dict = {'input:0': valid_X, 'label:0':valid_Y}
+            feed_dict = {'input:0': valid_X, 'label:0': valid_Y}
             valid_loss_ = sess.run(loss, feed_dict=feed_dict)
             aucArr.append(aucScore_) # 将当前auc score存入数组
             print("------------------------------------------------------------")
