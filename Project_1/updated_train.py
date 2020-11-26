@@ -6,7 +6,8 @@ import matplotlib.pyplot as plt
 
 lr = 3e-4 # Best learning rate for Adam optimizer
 #lr = 0.001
-dropout_rate = 0.01                 # Dropout rate
+#dropout_rate = 0.3                 # Dropout rate
+dropout_rate = tf.placeholder_with_default(0.0, shape=())
 regularization_coeff = 0.5          # Regularization coefficient
 EPOCH = 1000 # epoch
 BATCHSIZE = 32 # batch size
@@ -31,7 +32,7 @@ class Network(tf.keras.Model):
         channelNum = 32
         regularization = tf.contrib.layers.l2_regularizer(regularization_coeff)
         super(Network, self).__init__() # 对继承的父类对象进行初始化，将MyModel类型的对象self转化成tf.keras.Model类型的对象，然后调用其__init__()函数
-        #self.dropout = tf.keras.layers.Dropout(rate=dropout_rate) # 随机丢弃层
+        #self.dropout = tf.keras.layers.Dropout # 随机丢弃层
         self.conv1 = tf.keras.layers.Conv2D(channelNum, 5, 1, padding='same', activation=tf.nn.relu, kernel_regularizer=regularization)  # 卷积层一
         self.pool1 = tf.keras.layers.MaxPool2D(2, 2) # 池化层一
         self.conv2 = tf.keras.layers.Conv2D(channelNum, 3, (1, 2), padding='same', activation=tf.nn.relu, kernel_regularizer=regularization)  # 卷积层二
@@ -48,6 +49,7 @@ class Network(tf.keras.Model):
         pool2Res = self.pool2(conv2Res)
         flat = tf.reshape(pool2Res, [-1, 18*50*32])
         output = self.fc(flat)
+        output = tf.keras.layers.Dropout(rate=dropout_rate)(output)
         output = tf.nn.softmax(output)
         return output
 
@@ -88,21 +90,19 @@ def run_model():
     for epoch in range(EPOCH):
         for i in range(0, sampleNum, BATCHSIZE):
             b_X, b_Y = train_X[i: i + BATCHSIZE], train_Y[i: i + BATCHSIZE]
-            #dropout_rate = 0.01                  # 设置dropout rate
-            feed_dict = {'input:0': b_X, 'label:0': b_Y}
+            feed_dict = {'input:0': b_X, 'label:0': b_Y, dropout_rate: 0.3}
             _, loss_ = sess.run([optimizer, loss], feed_dict=feed_dict)
         print("Epoch:", epoch, '|', "Train loss:", loss_)
 
         #if epoch % 2 == 0:                      Adam优化器可以自动进行学习率的衰减更新，不需要人为更新
         #    lr /= 2
 
-        if epoch % 5 == 0:
-            #dropout_rate = 0                    # 在验证集中关闭dropout
-            valPrediction = sess.run(output, {'input:0': valid_X})
+        if epoch % 1 == 0:
+            valPrediction = sess.run(output, {'input:0': valid_X, dropout_rate: 0.0})
             valPrediction = valPrediction[:, 1] # 在全部数组（维）中取第1个数据，及所有集合的第1个数据
-            feed_dict = {prediction: valPrediction, label: valid_Y}
+            feed_dict = {prediction: valPrediction, label: valid_Y, dropout_rate: 0.0}
             aucScore_ = sess.run(aucScore, feed_dict=feed_dict) # 运行计算auc score
-            feed_dict = {'input:0': valid_X, 'label:0': valid_Y}
+            feed_dict = {'input:0': valid_X, 'label:0': valid_Y, dropout_rate: 0.0}
             valid_loss_ = sess.run(loss, feed_dict=feed_dict)
             aucArr.append(aucScore_) # 将当前auc score存入数组
             print("------------------------------------------------------------")
@@ -114,10 +114,10 @@ def run_model():
             else:
                 worseCount = 0
 
-            if worseCount >= 1:         # 验证集loss下降一次，学习率减半
+            if worseCount >= 5:         # 验证集loss下降一次，学习率减半
                 lr = lr / 2
 
-            if worseCount >= 2:         # 验证集loss连续下降两次，early stop
+            if worseCount >= 20:         # 验证集loss连续下降两次，early stop
                 return
 
             #if aucScore_ > bestAuc:
@@ -142,4 +142,3 @@ plt.xlabel('Epoch')  # 横坐标标题
 plt.ylabel('AUC Score')  # 纵坐标标题
 plt.axis('tight')  # 坐标轴紧密排布
 plt.show()
-
