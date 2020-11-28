@@ -5,10 +5,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 lr = 3e-4 # Best learning rate for Adam optimizer
-#lr = 0.001
 #dropout_rate = 0.3                 # Dropout rate
 dropout_rate = tf.placeholder_with_default(0.0, shape=())
-regularization_coeff = 0.5          # Regularization coefficient
+#regularization_coeff = 0.5          # Regularization coefficient
 EPOCH = 1000 # epoch
 BATCHSIZE = 32 # batch size
 aucArr = [] # 存储AUC Score的数组
@@ -26,16 +25,19 @@ def load_data(filefolder):
 train_X, train_Y = load_data('train') # 训练集，[8169，73, 398]
 valid_X, valid_Y = load_data('validation') # 验证集，[272, 73, 398]
 
+def regularization_func(rate):
+    return tf.contrib.layers.l2_regularizer(rate)
+
 ## Neuron Network Building ##
 class Network(tf.keras.Model):
     def __init__(self):
         channelNum = 32
-        regularization = tf.contrib.layers.l2_regularizer(regularization_coeff)
+        #regularization = tf.contrib.layers.l2_regularizer(regularization_coeff)
         super(Network, self).__init__() # 对继承的父类对象进行初始化，将MyModel类型的对象self转化成tf.keras.Model类型的对象，然后调用其__init__()函数
         #self.dropout = tf.keras.layers.Dropout # 随机丢弃层
-        self.conv1 = tf.keras.layers.Conv2D(channelNum, 5, 1, padding='same', activation=tf.nn.relu, kernel_regularizer=regularization)  # 卷积层一
+        self.conv1 = tf.keras.layers.Conv2D(channelNum, 5, 1, padding='same', activation=tf.nn.relu, kernel_regularizer=regularization_func(0.7))  # 卷积层一
         self.pool1 = tf.keras.layers.MaxPool2D(2, 2) # 池化层一
-        self.conv2 = tf.keras.layers.Conv2D(channelNum, 3, (1, 2), padding='same', activation=tf.nn.relu, kernel_regularizer=regularization)  # 卷积层二
+        self.conv2 = tf.keras.layers.Conv2D(channelNum, 3, (1, 2), padding='same', activation=tf.nn.relu, kernel_regularizer=regularization_func(0.7))  # 卷积层二
         self.pool2 = tf.keras.layers.MaxPool2D(2, 2) #池化层二
         self.fc = tf.keras.layers.Dense(2) #全连接层
 
@@ -114,10 +116,10 @@ def run_model():
             else:
                 worseCount = 0
 
-            if worseCount >= 5:         # 验证集loss下降一次，学习率减半
+            if worseCount >= 1:         # 验证集loss下降一次，学习率减半
                 lr = lr / 2
 
-            if worseCount >= 20:         # 验证集loss连续下降两次，early stop
+            if worseCount >= 2:         # 验证集loss连续下降两次，early stop
                 return
 
             #if aucScore_ > bestAuc:
