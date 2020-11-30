@@ -5,8 +5,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 lr = 3e-4 # Best learning rate for Adam optimizer
-#dropout_rate = 0.3                 # Dropout rate
-dropout_rate = tf.placeholder_with_default(0.0, shape=())
+dropout_rate = tf.placeholder_with_default(0.0, shape=())   # Placeholder for dropout rate
 #regularization_coeff = 0.5          # Regularization coefficient
 EPOCH = 1000 # epoch
 BATCHSIZE = 32 # batch size
@@ -43,8 +42,6 @@ class Network(tf.keras.Model):
 
     def call(self, inputs, training=None, mask=None):
         conv1Res = self.conv1(inputs)
-        #dropoutRes = self.dropout(conv1Res, training=True)
-        #pool1Res = self.pool1(dropoutRes)
         #bnRes = tf.layers.batch_normalization(inputs=conv1Res, training=True)  # Batch Normalization层
         pool1Res = self.pool1(conv1Res)
         conv2Res = self.conv2(pool1Res)
@@ -65,7 +62,6 @@ label = tf.placeholder(tf.int32, [None], name='label') # Tensor("label:0", shape
 label2D = tf.one_hot(label, 2) # 将label矩阵转化成one_hot编码类型的label2D，维数为2，及有两种不同的编码，分别对应label的0和1，Tensor("one_hot:0", shape=(?,2), dtype=float32)
 
 output = myModel(input) # 利用input获取output
-#myModel.summary() # 展示模型结构
 
 loss = tf.keras.losses.BinaryCrossentropy()(label2D, output) # 计算损失函数，使用二维one_hot类型的label
 
