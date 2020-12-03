@@ -12,6 +12,8 @@
  
  &emsp; &emsp; 5. 模型优化相关
  
+ &emsp; &emsp; 6. DGL框架及GCN实现
+ 
  - Homework1: `Search Algorithms`
  
  - Homework2: 模型评估 + `TensorFlow`搭建简单的逻辑回归模型
