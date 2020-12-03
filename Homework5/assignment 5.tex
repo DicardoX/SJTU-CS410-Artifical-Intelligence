@@ -1,0 +1,320 @@
+\documentclass{article} 
+\usepackage[fleqn]{amsmath}
+\usepackage{graphicx}
+\usepackage{mathrsfs}
+\usepackage{color}
+\usepackage{amssymb}
+\usepackage{amsfonts,amssymb}
+\usepackage{array}
+\usepackage{latexsym}
+\usepackage{tabularx} 
+\usepackage{enumerate}
+\usepackage{multirow}
+
+
+\title{\normalsize
+CS410: Artificial Intelligence 2020 Fall\\
+Homework 5: Game Trees\\
+Due date: 23:59:59 (GMT +08:00), December 17, 2020}
+\author{Chunyu Xue 518021910698}
+\date{}
+
+\begin{document} 
+\maketitle
+
+\section{Zero-Sum Game}
+\noindent (a) Consider the zero-sum game tree shown below. Triangles that point up, such as at the top node (root), represent choices for the maximizing player; triangles that point down represent choices for the minimizing player. Assuming both players act optimally, fill in the minimax value of each node.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=12cm,height=5cm]{pictures/illu1.png}
+\end{figure}
+
+\textbf{Answer:} The point down triangles are 3, 2, and 4, while the point up triangle is 4. \\
+
+
+\noindent (b) Which nodes can be pruned from the game tree above through alpha-beta pruning? If no nodes can be pruned, explain why not. Assume the search goes from left to right; when choosing which child to visit first, choose the left-most unvisited child. \\
+
+\textbf{Answer:} 15 and 7.
+
+~\\
+~\\
+
+\newpage
+\noindent (c) Again, consider the same zero-sum game tree, except that now, instead of a minimizing player, we have a chance node that will select one of the three values uniformly at random. Fill in the expectimax value of each node. The game tree is redrawn below for your convenience.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=12cm,height=5cm]{pictures/illu2.png}
+\end{figure}
+
+\textbf{Answer:} The circles are 7, 8, and 5, while the point up triangle is 8. 
+
+~\\
+~\\
+(d) Which nodes can be pruned from the game tree above through alpha-beta pruning? If no nodes can be pruned, explain why not.
+
+\textbf{Answer:} \textbf{There is no nodes can be pruned.}
+
+It's always possible that an not-yet-unvisited leaf of the current parent chance node will have a relatively high value that increases the overall average value for that chance node. 
+
+When we see that leaf 4 has a value of 2, which is much less than the value of the left chance node, 7, at this point we cannot make any assumptions about how the value of the middle chance node will ultimately be more or less in value than the left chance node. As it turns out, the leaf 5 has a value of 15, which brings the expected value of the middle chance node to 8, which is greater than the value of the left chance node. 
+
+Only when there is an upper bound to the value of a leaf node, there is a possibility of pruning.
+
+\newpage
+\section{Nonzero-Sum Game}
+\noindent (a) Let’s look at a non-zero-sum version of a game. In this formulation, player A’s utility will be represented as the first of the two leaf numbers, and player B’s utility will be represented as the second of the two leaf numbers. Fill in this non-zero game tree assuming each player is acting optimally.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=12cm,height=5cm]{pictures/illu3.png}
+\end{figure}
+
+\textbf{Answer:} The upper triangle is (15, 9). The triangles below are (3, 5), (15, 9) and (4, 12).
+
+~\\
+~\\
+\noindent (b) Which nodes can be pruned from the game tree above through alpha-beta pruning? If no nodes can be pruned, explain why not. \\
+
+\textbf{Answer:} \textbf{There is no node that can be pruned.} The reason is that  this is a non-zero-sum game, in which there can exist a leaf node anywhere in the tree that is good for both player A and player B!
+
+
+\newpage
+\section{Games}
+\noindent Alice is playing a two-player game with Bob, in which they move alternately. Alice is a maximizer. Although Bob is also a maximizer, Alice believes Bob is a minimizer with probability 0.5, and a maximizer with probability 0.5. Bob is aware of Alice’s assumption.
+
+\noindent In the game tree below, square nodes are the outcomes, triangular nodes are Alice’s moves, and round nodes are Bob’s moves. Each node for Alice/Bob contains a tuple, the left value being Alice’s expectation of the outcome, and the right value being Bob’s expectation of the outcome.
+
+\noindent Tie-breaking: choose the left branch. 
+\begin{figure}[h]
+\centering
+\includegraphics[width=12cm,height=6cm]{pictures/illu4.png}
+\end{figure}
+
+
+
+\noindent (a) In the blanks below, fill in the tuple values for tuples $(B_a , B_b)$ and $(E_a , E_b)$ from the above game tree. \\
+
+\begin{itemize}
+  \item $(B_a , B_b) = (\_\_\_\_\_\_\_\_,\_\_\_\_\_\_\_\_)$
+  \item $(E_a , E_b) = (\_\_\_\_\_\_\_\_,\_\_\_\_\_\_\_\_)$
+\end{itemize}
+
+\textbf{Answer:} $(B_a, B_b) = (5, 9)$, $(E_a, E_b) = (7, 13)$ \\
+
+\noindent (b) In this part, we will determine the values for tuple $(D_a , D_b)$. 
+\begin{itemize}
+  \item $D_a = $  $\bigcirc 8$  \quad      $\bigcirc X$ \quad     $\bigcirc 8+X$   \quad    $\bigcirc 4+0.5X$   \quad   $\bigcirc \min(8,X)$   \quad   $\bigcirc \max(8,X)$    
+  \item $D_b = $  $\bigcirc 8$  \quad      $\bigcirc X$ \quad     $\bigcirc 8+X$   \quad    $\bigcirc 4+0.5X$   \quad   $\bigcirc \min(8,X)$   \quad   $\bigcirc \max(8,X)$   
+\end{itemize}
+
+\textbf{Answer:} $D_a = 4+0.5X$, $D_b = max(8, X)$
+
+\newpage
+\begin{figure}[h]
+\centering
+\includegraphics[width=12cm,height=6cm]{pictures/illu5.png}
+\end{figure}
+\noindent (The graph of the tree is copied for your convenience. You may do problem (e) on this graph. )
+
+\noindent (c) Fill in the values for tuple $(C_a , C_b)$ below. For the bounds of $X$, you may write scalars, $\infty$ or $-\infty$.
+
+\noindent If your answer contains a fraction, please write down the corresponding \textbf{simplified decimal value} in its place.
+
+\begin{itemize}
+  \item If $-\infty < X < \_\_\_\_\_\_$: $(C_a , C_b) = (\_\_\_\_\_\_\_\_,\_\_\_\_\_\_\_\_)$
+  \item Else $(C_a , C_b) = (\_\_\_\_\_\_\_\_,  \max(\_\_\_\_\_\_\_\_,\_\_\_\_\_\_\_\_) )$
+\end{itemize}
+
+\textbf{Answer:} 
+
+(1) 6, 7, 13;
+
+(2) 4+0.5X, 8, X. \\
+
+\noindent (d) Fill in the values for tuple $(A_a , A_b)$ below. For the bounds of $X$, you may write scalars, $\infty$ or $-\infty$.
+
+\noindent If your answer contains a fraction, please write down the corresponding \textbf{simplified decimal value} in its place.
+
+\begin{itemize}
+  \item If $-\infty < X < \_\_\_\_\_\_$: $(A_a , A_b) = (\_\_\_\_\_\_\_\_,\_\_\_\_\_\_\_\_)$
+  \item Else $(A_a , A_b) = (\_\_\_\_\_\_\_\_,  \max(\_\_\_\_\_\_\_\_,\_\_\_\_\_\_\_\_) )$
+\end{itemize}
+
+\textbf{Answer:}
+
+(1) 6, 6, 13;
+
+(2) 4.5+0.25X, 9, X. \\
+
+\noindent (e) When Alice computes the left values in the tree, some branches can be pruned and do not need to be explored. In the game tree graph on this page, put an ’X’ on these branches. If no branches can be pruned, mark the "Not possible" choice below.
+
+\noindent Assume that the children of a node are visited in left-to-right order and that you should not prune on equality.
+
+$\bigcirc $ Not possible \\
+
+\textbf{Answer:} Not possible (marked).
+
+\newpage
+\section{Games}
+Alyssa P. Hacker and Ben Bitdiddle are bidding in an auction at Stanley University for a bike. Alyssa will either bid $x_1$ , $x_2$ , or $x_3$ for the bike. She knows that Ben will bid $y_1$ , $y_2$ , $y_3$ , $y_4$ , or $y_5$ , but she does not know which. All bids are nonnegative.
+
+\noindent (a) Alyssa wants to maximize her payoff given by the expectimax tree below. The leaf nodes show Alyssa’s payoff. The nodes are labeled by letters, and the edges are labeled by the bid values $x_i$ and $y_i$. The maximization node S represents Alyssa, and the branches below it represent each of her bids: $x_1$ , $x_2$ , $x_3$ . The chance nodes P, Q, R represent Ben, and the branches below them represent each of his bids: $y_1$ , $y_2$ , $y_3$ , $y_4$ , $y_5$.
+\begin{figure}[h]
+\centering
+\includegraphics[width=13cm,height=7cm]{pictures/illu6.png}
+\end{figure}
+
+\noindent (a.i) Suppose that Alyssa believes that Ben would bid any bid with equal probability. What are the values of the chance (circle) and maximization (triangle) nodes? 
+\begin{itemize}
+  \item Node P: \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+  \item Node Q: \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+  \item Node R: \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+  \item Node S: \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+\end{itemize}
+
+\textbf{Answer:} The answer is as follows:
+
+\begin{itemize}
+    \item Node P: 0.4
+    
+    \item Node Q: 0.6
+    
+    \item Node R: 0
+    
+    \item Node S: 0.6
+\end{itemize}
+
+\noindent (a.ii) Based on the information from the above tree, how much should Alyssa bid for the bike?
+
+\textbf{Answer:} Alyssa should bid $x_2$ for the bike. \\
+
+\noindent (b) Alyssa does expectimax search by visiting child nodes from left to right. Ordinarily expectimax trees cannot be pruned without some additional information about the tree. Suppose, however, that Alyssa knows that the leaf nodes are ordered such that payoffs are non-increasing from left to right (the leaf nodes of the above diagram is an example of this ordering). Recall that if node X is a child of a maximizer node, a child of node X may be pruned if we know that the value of node X will never be $>$ some threshold (in other words, it is $\le$ that threshold). Given this information, if it is possible to prune any branches from the tree, mark them below. Otherwise, mark ``None of the above''
+
+\indent $\bigcirc$ A  ~~~~~$\bigcirc$ B  ~~~~~ $\bigcirc$ C  ~~~~~ $\bigcirc$ D  ~~~~~ $\bigcirc$ E ~~~~~ $\bigcirc$ F  ~~~~~  $\bigcirc$ G   ~~~~~$\bigcirc$ H\\
+\indent $\bigcirc$ I  ~~~~~$\bigcirc$ J  ~~~~~ $\bigcirc$K  ~~~~~ $\bigcirc$ L ~~~~~ $\bigcirc$ M ~~~~~ $\bigcirc$ N  ~~~~~  $\bigcirc$ O   ~~~~~$\bigcirc$ None of the above\\
+
+\textbf{Answer:} The answer is: N and O.
+
+
+~\\
+
+\noindent (c) Unrelated to parts (a) and (b), consider the minimax tree below. whose leaves represent payoffs for the maximizer. The crossed out edges show the edges that are pruned when doing naive alpha-beta pruning visiting children nodes from left to right. Assume that we prune on equalities (as in, we prune the rest of the children if the current child is $\le \alpha$ (if the parent is a minimizer) or $\ge \beta$ (if the parent is a maximizer)).
+\begin{figure}[h]
+\centering
+\includegraphics[width=13cm,height=8cm]{pictures/illu7.png}
+\end{figure}
+Fill in the inequality expressions for the values of the labeled nodes A and B. Write $\infty$ and $-\infty$ if there is no upper or lower bound, respectively.
+\begin{itemize}
+  \item  $\_\_\_\_\_\_\_\_\_\_ \le A \le \_\_\_\_\_\_\_\_\_\_$
+  \item  $\_\_\_\_\_\_\_\_\_\_ \le B \le \_\_\_\_\_\_\_\_\_\_$
+\end{itemize}
+
+\textbf{Answer:} $6 \leq A \leq \infty$, $-\infty \leq B \leq 4$.
+
+~\\
+
+\noindent (d) Suppose node B took on the largest value it could possibly take on and still be consistent with the pruning scheme above. After running the pruning algorithm, we find that the values of the left and center subtrees have the same minimax value, both 1 greater than the minimax value of the right subtree. Based on this information, what is the numerical value of node C?  
+
+\textbf{Answer:} The value of node C is 3.
+
+~\\
+
+\noindent (e) For which values of nodes D and E would choosing to take action $z_2$ be guaranteed to yield the same payoff as action $z_1$ ? Write $\infty$ and $-\infty$ if there is no upper or lower bound, respectively (this would correspond to the case where nodes D and E can be any value).
+\begin{itemize}
+  \item  $\_\_\_\_\_\_\_\_\_\_ \le D \le \_\_\_\_\_\_\_\_\_\_$
+  \item  $\_\_\_\_\_\_\_\_\_\_ \le E \le \_\_\_\_\_\_\_\_\_\_$
+\end{itemize}
+
+\textbf{Answer:} $4 \leq D \leq \infty$, $4 \leq D \leq \infty$
+
+\newpage
+
+\section{Maximum Expected Utility}
+For the following game tree, each player maximizes their respective utility. Let $x, y$ respectively denote the top and bottom values in a node. Player 1 uses the utility function $U_1(x,y) = x$.
+\begin{figure}[h]
+\centering
+\includegraphics[width=13cm,height=10cm]{pictures/illu8.png}
+\end{figure}
+
+\noindent (a) Both players know that Player 2 uses the utility function $U_2(x,y)=x-y$.\
+\noindent (a.i) Fill in the rectangles in the figure above with pair of values returned by each max node. \\
+
+\textbf{Answer:} From top-down, left-right: (6, 2), (6, 2), (3, 0), (5, 3)
+
+\newpage
+\noindent Figure repeated for convenience
+\begin{figure}[h]
+\centering
+\includegraphics[width=13cm,height=10cm]{pictures/illu9.png}
+\end{figure}
+
+
+\noindent (b) Now assume Player 2 changes their utility function based on their mood. The probabilities of Player 2’s utilities and mood are described in the following table. Let M, U respectively denote the mood and utility function of Player 2.
+
+\begin{tabular}{|c|c|}
+\hline 
+$P(M=\text{happy})$ & $P(M=\text{mad})$\\
+\hline  
+$a$  & $b$\\
+\hline 
+\end{tabular}
+
+\begin{tabular}{|c|c|c|}
+\hline 
+ & M=\text{happy} & M=\text{mad} \\
+\hline
+$P(U_2(x,y)=-x\mid M)$ & c & f\\
+\hline  
+$P(U_2(x,y)=x-y\mid M)$ & d & g\\
+\hline 
+$P(U_2(x,y)=x^2 + y^2\mid M)$ & e & h\\
+\hline 
+\end{tabular}
+
+\noindent (b.i) Calculate the maximum expected utility of the game for Player 1 in terms of the values in the game tree and the tables. It may be useful to record and label your intermediate calculations. You may write your answer in terms of a max function. Please provide the detailed calculation process. 
+
+\textbf{Answer:} The detailed caculation process is as follows:
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=13cm,height=10cm]{pictures/solution.jpg}
+\end{figure}
+
+
+\newpage
+\section{MedianMiniMax}
+
+You’re living in utopia! Despite living in utopia, you still believe that you need to maximize your utility in life, other people want to minimize your utility, and the world is a 0 sum game. But because you live in utopia, a benevolent social planner occasionally steps in and chooses an option that is a compromise. Essentially, the social planner (represented as the pentagon) is a median node that chooses the successor with median utility. Your struggle with your fellow citizens can be modelled as follows:
+\begin{figure}[h]
+\centering
+\includegraphics[width=13cm,height=7cm]{pictures/illu10.png}
+\end{figure}
+
+\noindent There are some nodes that we are sometimes able to prune. In each part, \textbf{mark all of the terminal nodes such that there exists a possible situation for which the node can be pruned} and \textbf{provide detailed discussions}. In other words, you must consider \textbf{all} possible pruning situations and \textbf{give reasons}. Assume that evaluation order is left to right and all $V_i$’s are distinct.\\
+~\\
+
+
+\noindent Note that as long as there exists ANY pruning situation (does not have to be the same situation for every node), you should mark the node as prunable. Also, alpha-beta pruning does not apply here, simply prune a sub-tree when you can reason that its value will not affect your final utility.\\
+~\\
+
+
+\noindent part a: $\bigcirc$ $V_1$  ~~~~~~$\bigcirc$ $V_2$  ~~~~~~ $\bigcirc$ $V_3$  ~~~~~~ $\bigcirc$ $V_4$ ~~~~~~~$\bigcirc$ None\\
+\noindent part b: $\bigcirc$ $V_5$  ~~~~~~$\bigcirc$ $V_6$  ~~~~~~ $\bigcirc$ $V_7$  ~~~~~~ $\bigcirc$ $V_8$ ~~~~~~~$\bigcirc$ None \\
+\noindent part c: $\bigcirc$ $V_9$  ~~~~~~$\bigcirc$ $V_{10}$  ~~~~~ $\bigcirc$ $V_{11}$  ~~~~~ $\bigcirc$ $V_{12}$ ~~~~~~$\bigcirc$ None \\
+\noindent part d: $\bigcirc$ $V_{13}$  ~~~~~$\bigcirc$ $V_{14}$  ~~~~~ $\bigcirc$ $V_{15}$  ~~~~~ $\bigcirc$ $V_{16}$~~~~~~ $\bigcirc$ None \\
+
+\textbf{Answer:}
+
+\begin{itemize}
+    \item part a: None
+    
+    \item part b: $V_6$, $V_7$, $V_8$
+    
+    \item part c: $V_{11}$, $V_{12}$
+    
+    \item part d: $V_{14}$, $V_{15}$, $V_16$
+\end{itemize}
+
+\end{document} 
