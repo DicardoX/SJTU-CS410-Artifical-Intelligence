@@ -1,89 +1,109 @@
+import time
+import numpy as np
 import dgl
 import dgl.function as fn
 import torch as th
 import torch.nn as nn
 import torch.nn.functional as F
 from dgl import DGLGraph
-import numpy as np
-import os
-import pandas as pd
-import networkx as nx
-import pysmiles
+import matplotlib.pyplot as plt
+from smilesToGraph import load_data
 
-## Step 2: 定义GCN的message函数和reduce函数
-# 每个节点发送Embedding的时候不需要任何处理，所以通过内置的copy_src实现，out='m'表示发送到目标节点后目标节点的mailbox用'm'来标示这个消息是源节点的Embedding。
-from pysmiles import read_smiles
+gcn_msg = fn.copy_src(src="h", out="m")
+gcn_reduce = fn.sum(msg="m", out="h")  # 聚合邻居节点的特征
 
-gcn_msg = fn.copy_src(src='h', out='m')
-# 目标节点的reduce函数很简单，因为按照GCN的数学定义，邻接矩阵和特征矩阵相乘，目标节点的reduce只需要通过sum将接收到的message相加
-gcn_reduce = fn.sum(msg='m', out='h')
-
-## Step 3: 定义一个应用于节点的node UDF(user defined function)，即定义一个全连接层来对中间节点表示h^{hat}_i进行线性变换，再利用非线性函数进行计算
+# 定义节点的UDF apply_nodes  他是一个完全连接层
 class NodeApplyModule(nn.Module):
+    # 初始化
     def __init__(self, in_feats, out_feats, activation):
         super(NodeApplyModule, self).__init__()
         self.linear = nn.Linear(in_feats, out_feats)
         self.activation = activation
 
+    # 前向传播
     def forward(self, node):
-        h = self.linear(node.data['h'])
-        h = self.activation(h)
-        return {'h': h}
+        h = self.linear(node.data["h"])
+        if self.activation is not None:
+            h = self.activation(h)
+        return {"h": h}
 
-## Step 4: 定义GCN的Embedding更新层，以实现在所有节点上进行消息传递，并利用NodeApplyModule对节点信息进行计算更新
+
+# 定义GCN模块  GCN模块的本质是在所有节点上执行消息传递  然后再调用NOdeApplyModule全连接层
 class GCN(nn.Module):
+    # 初始化
     def __init__(self, in_feats, out_feats, activation):
         super(GCN, self).__init__()
+        # 调用全连接层模块
         self.apply_mod = NodeApplyModule(in_feats, out_feats, activation)
 
+    # 前向传播
     def forward(self, g, feature):
-        g.ndata['h'] = feature
+        g.ndata["h"] = feature  # feature应该对应的整个图的特征矩阵
         g.update_all(gcn_msg, gcn_reduce)
-        g.apply_nodes(func=self.apply_mod)
-        return g.ndata.pop('h')
+        g.apply_nodes(func=self.apply_mod)  # 将更新操作应用到节点上
 
-## Step 5: 定义一个包含两个GCN层的图神经网络分类器，通过向该分类器输入特征大小为1433的训练样本，以获得该样本所属的类别编号
+        return g.ndata.pop("h")
+
+
+# 利用cora数据集搭建网络然后训练
 class Net(nn.Module):
+    # 初始化网络参数
     def __init__(self):
         super(Net, self).__init__()
-        self.gcn1 = GCN(1433, 16, F.relu)
-        self.gcn2 = GCN(16, 7, F.relu)
+        self.gcn1 = GCN(1433, 16, F.relu)  # 第一层GCN
+        self.gcn2 = GCN(16, 7, None)
 
+    # 前向传播
     def forward(self, g, features):
         x = self.gcn1(g, features)
         x = self.gcn2(g, x)
         return x
 
-def load_data(filefolder):
-    ## 从names_smiles.txt文件中读入数据
-    filefolder = './data/' + filefolder
-    fopen = open(filefolder + "/names_smiles.txt", "r")
-    List_row = fopen.readlines()
-    data = []
-    for i in range(1, len(List_row), 1):
-        colume_list = List_row[i].strip().split(",")
-        data.append(colume_list)
 
-    ## 读取分子式并转化为邻接矩阵
-    matrix_list = []
-    for i in range(0, len(data), 1):
-        mol = read_smiles(data[i][1])   # 读取分子式
-        adjacency_matrix = nx.to_numpy_matrix(mol)  # 将分子式转化为邻接矩阵
-        matrix_list.append(adjacency_matrix)    # 存储到list中
+net = Net()
+
+# 使用DGL内置模块加载cora数据集
+from dgl.data import citation_graph as citegrh
+
+train_graphs, train_features, train_labels = load_data('train')
+valid_graphs, valid_features, valid_labels = load_data('validation')
+
+#nx.draw(g.to_networkx(), node_size=50, with_labels=True)
+#plt.show()
 
 
+# 测试模型
+def evaluate(model, graphs, features, labels):
+    model.eval()                        # 会通知所有图层您处于评估模式
+    with th.no_grad():
+        logits = model(graphs, features)
+        #logits = logits[mask]
+        #labels = labels[mask]
+        _, indices = th.max(logits, dim=1)
+        correct = th.sum(indices == labels)
+        return correct.item() * 1.0 / len(labels)
 
-    #print(data)
+# 定义优化器
+optimizer = th.optim.Adam(net.parameters(), lr=1e-3)
+#dur = []  # 时间
+for epoch in range(100):
+#    print(epoch)
+#    if epoch >= 3:
+#        t0 = time.time()
+    net.train()
+    print(type(train_graphs))
+    logits = net(train_graphs, train_features)
+    logp = F.log_softmax(logits, 1)
+    loss = F.nll_loss(logp, train_labels)
 
-    """
-    data = np.load(os.path.abspath(filefolder + '/names_onehots.npy'),
-                   allow_pickle=True).item()  # allow_pickle: 可选，布尔值，允许使用 Python pickles 保存对象数组；data为dict字典类型
-    print(data)
-    data = data['onehots']  # 查询规格：data.shape[0 ~ 2]，分别是高度（sampleNum）、宽度（特征数）、通道数
-    #print(data)
-    label = pd.read_csv(os.path.abspath(filefolder + '/names_labels.txt'), sep=',')
-    label = label['Label'].values
-    return data, label
-    """
+    optimizer.zero_grad()
+    loss.backward()
+    optimizer.step()
 
-load_data('train')
+#    if epoch >= 3:
+#        dur.append(time.time() - t0)
+
+    acc = evaluate(net, valid_graphs, valid_features, valid_labels)
+#    print("Epoch {:05d} | Loss {:.4f} | Test Acc {:.4f} | Time(s) {:.4f}".format(
+#        epoch, loss.item(), acc, np.mean(dur)))
+    print("Epoch:", epoch, '|', "Train loss:", loss.item(), '|', "Validation accuracy:", acc)
