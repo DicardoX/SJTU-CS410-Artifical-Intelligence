@@ -44,24 +44,33 @@ class GraphConvolution(Module):
                + str(self.out_features) + ')'
     
 class GCN(nn.Module):
-    def __init__(self, maxAtomNum, featureNum, hiddenLayerNum1, hiddenLayerNum2, classNum, dropout, BatchSize):
+    def __init__(self, maxAtomNum, featureNum, hiddenLayerNum1, hiddenLayerNum2, hiddenLayerNum3, hiddenLayerNum4, classNum, dropout):
         super(GCN, self).__init__()
-        self.gc1 = GraphConvolution(featureNum, hiddenLayerNum1)
-        self.gc2 = GraphConvolution(hiddenLayerNum1, hiddenLayerNum2)
-        self.fc = th.nn.Linear(in_features=hiddenLayerNum2*maxAtomNum, out_features=classNum)
+        self.gcn1 = GraphConvolution(featureNum, hiddenLayerNum1)
+        self.gcn2 = GraphConvolution(hiddenLayerNum1, hiddenLayerNum2)
+        self.gcn3 = GraphConvolution(hiddenLayerNum2, hiddenLayerNum3)
+        self.gcn4 = GraphConvolution(hiddenLayerNum3, hiddenLayerNum4)
+        self.fc = th.nn.Linear(in_features=hiddenLayerNum4*maxAtomNum, out_features=classNum)
         self.dropout = dropout
 
     def forward(self, x, adj):
         #print(x.shape)
-        x = F.relu(self.gc1(x, adj))
+        x = F.relu(self.gcn1(x, adj))
         x = F.dropout(x, self.dropout, training=self.training)
-        x = F.relu(self.gc2(x, adj))
+        x = F.relu(self.gcn2(x, adj))
+        x = F.dropout(x, self.dropout, training=self.training)
+        x = F.relu(self.gcn3(x, adj))
+        x = F.dropout(x, self.dropout, training=self.training)
+        x = F.relu(self.gcn4(x, adj))
+        x = F.dropout(x, self.dropout, training=self.training)
         #print(x.shape)
         x = th.reshape(x, shape=[-1, 256*132])
         # Flatten
         #print(x.shape)
         # Fully Connetc
         x = self.fc(x)
+        x = F.dropout(x, 0.1, training=self.training)
+
         #print(x.shape)
         return F.softmax(x, dim=1)
 
