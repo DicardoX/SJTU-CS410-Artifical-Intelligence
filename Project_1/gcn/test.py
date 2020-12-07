@@ -46,7 +46,7 @@ def predict():
     samepleNum = test_features.shape[0]
     for i in range (0, samepleNum, BatchSize):
         output = model(th.FloatTensor(test_features[i: i + BatchSize]), th.FloatTensor(test_graphs[i: i + BatchSize]))
-        output_res = output.detach().numpy()[:, 0]
+        output_res = output.detach().numpy()[:, 1]
         output_res = np.array(output_res)
         #pred = output[:, 1]
         #print(output.shape)
