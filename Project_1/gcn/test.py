@@ -21,11 +21,23 @@ test_names = data['names']
 
 
 # 超参数定义
-hiddenLayerNum = 512
-BatchSize = 64
+BatchSize = 128
+hiddenLayerNum1 = 128
+hiddenLayerNum2 = 256
 
 # 模型加载
-model = th.load('./model/model.pkl')
+model = th.load('./model/model_loss.pkl')
+'''
+print(test_features[0].shape)
+model = GCN(maxAtomNum=test_features[0].shape[0],
+            featureNum=test_features[0].shape[1],      # 59
+            hiddenLayerNum1=hiddenLayerNum1,
+            hiddenLayerNum2=hiddenLayerNum2,
+            classNum=2,
+            dropout=0,
+            is_training=False)
+model.load_state_dict(th.load('./model/parameter.pkl'))
+'''
 
 # 模型预测
 def predict():
@@ -34,7 +46,7 @@ def predict():
     samepleNum = test_features.shape[0]
     for i in range (0, samepleNum, BatchSize):
         output = model(th.FloatTensor(test_features[i: i + BatchSize]), th.FloatTensor(test_graphs[i: i + BatchSize]))
-        output_res = output.detach().numpy()[:, 1]
+        output_res = output.detach().numpy()[:, 0]
         output_res = np.array(output_res)
         #pred = output[:, 1]
         #print(output.shape)
