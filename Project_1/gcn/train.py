@@ -8,21 +8,23 @@ from sklearn.metrics import roc_auc_score
 
 os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
 
-from utils import accuracy, normalize, encode_onehot, load_data
+from utils import encode_onehot, load_data
 from models import GCN
 
 # 超参数定义
-hiddenLayerNum1 = 128
-hiddenLayerNum2 = 256
-layerNum = 2
+hiddenLayerNum1 = 64
+hiddenLayerNum2 = 128
+hiddenLayerNum3 = 128
+hiddenLayerNum4 = 256
+#layerNum = 3
 dropout_rate = 0.5
 #lr = 1e-3
 lr = 3e-4
 weight_decay = 5e-4
 EPOCH = 1000
-BatchSize = 128
-seed = 42   # Random seed
-maxAtomNum = 132
+BatchSize = 64
+seed = 123   # Random seed
+#maxAtomNum = 132
 
 np.random.seed(seed)
 th.manual_seed(seed)
@@ -42,25 +44,10 @@ model = GCN(maxAtomNum=train_features[0].shape[0],
             featureNum=train_features[0].shape[1],      # 59
             hiddenLayerNum1=hiddenLayerNum1,
             hiddenLayerNum2=hiddenLayerNum2,
+            hiddenLayerNum3=hiddenLayerNum3,
+            hiddenLayerNum4=hiddenLayerNum4,
             classNum=train_labels.max().item() + 1,
-            dropout=dropout_rate,
-            BatchSize=BatchSize)
-
-'''
-g = dgl.graph(train_graphs)
-g = dgl.add_self_loop(g)
-
-g = dgl.DGLGraph(th.FloatTensor(train_features[0]))
-print(type(g))
-
-model = GCN(g=g,
-            in_feats=train_features[0].shape[1],
-            n_hidden=hiddenLayerNum,
-            n_classes=train_labels.max().item() + 1,
-            n_layers=layerNum,
-            activation=F.relu,
             dropout=dropout_rate)
-'''
 
 # 定义优化器
 optimizer = th.optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
@@ -71,8 +58,6 @@ def validation(epoch):
     avgValidAuc = 0.0
     samepleNum = valid_features.shape[0]
     for i in range(0, samepleNum, BatchSize):
-    #    if samepleNum < (i + 1) * BatchSize:
-    #        continue
 
         model.eval()
 
@@ -87,11 +72,12 @@ def validation(epoch):
         avgValidLoss += valid_loss.item()
         avgValidAuc += valid_auc
 
+
     avgValidLoss = avgValidLoss * BatchSize / samepleNum
     avgValidAuc = avgValidAuc * BatchSize / samepleNum
     print("Epoch:", epoch, "|", "Validation loss:", avgValidLoss, '|', "Validation AUC Score:", avgValidAuc)
 
-    return avgValidAuc
+    return avgValidAuc, avgValidLoss
 
 # 模型训练
 def train(epoch):
@@ -129,36 +115,41 @@ worseCount = 0
 
 # 迭代训练
 print("Model training...")
-aucArr = []
+#aucArr = []
+lossArr = []
 for epoch in range(EPOCH):
     print("----------------------------------")
     train(epoch)
-    validAuc = validation(epoch)
-    aucArr.append(validAuc)
+    validAuc, validLoss = validation(epoch)
+    #aucArr.append(validAuc)
+    lossArr.append(validLoss)
 
-    if validAuc >= bestValidAuc:
+    if validLoss <= bestValidLoss:
         worseCount = 0
-        bestValidAuc = validAuc
-        th.save(model, './model/model.pkl')
+        bestValidLoss = validLoss
+        th.save(model, './model/model_loss.pkl')
+        #th.save(model.state_dict(), './model/parameter.pkl')
     else:
         worseCount += 1
 
-    #if epoch != 0 and accArr[epoch - 1] > accArr[epoch]:
-    #    worseCount += 1
-    #else:
+    #if validAuc >= bestValidAuc:
     #    worseCount = 0
+    #    bestValidAuc = validAuc
+    #    th.save(model, './model/model_auc.pkl')
+    #else:
+    #    worseCount += 1
 
     if worseCount > 10:
         print("Constantly getting worse valid AUC score. Early stop!")
         break
 
     #print("Currently best validation loss:", bestValidLoss)
-    print("Currently best validation AUC score:", bestValidAuc, "(for", worseCount, "epochs not improved)")
+    print("Currently best validation loss:", bestValidLoss, "(for", worseCount, "epochs not improved)")
 
-plt.plot(aucArr)
+plt.plot(lossArr)
 plt.grid(True)  # 增加网格点
-plt.title('Valid AUC Curve')  # 设置图表标题
+plt.title('Valid Loss Curve')  # 设置图表标题
 plt.xlabel('Epoch')  # 横坐标标题
-plt.ylabel('AUC Score')  # 纵坐标标题
+plt.ylabel('Loss')  # 纵坐标标题
 plt.axis('tight')  # 坐标轴紧密排布
 plt.show()
