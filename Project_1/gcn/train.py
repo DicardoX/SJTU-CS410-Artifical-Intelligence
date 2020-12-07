@@ -19,10 +19,10 @@ hiddenLayerNum4 = 256
 #layerNum = 3
 dropout_rate = 0.5
 #lr = 1e-3
-lr = 3e-4
+lr = 3e-3
 weight_decay = 5e-4
 EPOCH = 1000
-BatchSize = 64
+BatchSize = 128
 seed = 123   # Random seed
 #maxAtomNum = 132
 
