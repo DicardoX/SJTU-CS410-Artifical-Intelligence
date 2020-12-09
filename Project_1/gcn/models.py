@@ -46,7 +46,7 @@ class GraphConvolution(Module):
 
 
 class GCN(nn.Module):
-    def __init__(self, maxAtomNum, featureNum, hiddenLayerNum1, hiddenLayerNum2, hiddenLayerNum3, hiddenLayerNum4, hiddenLayerNum5, hiddenLayerNum6,
+    def __init__(self, maxAtomNum, featureNum, hiddenLayerNum1, hiddenLayerNum2, hiddenLayerNum3, hiddenLayerNum4,
                  classNum, dropout):
         super(GCN, self).__init__()
         self.gcn1 = GraphConvolution(featureNum, hiddenLayerNum1)
