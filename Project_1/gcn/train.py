@@ -20,7 +20,8 @@ hiddenLayerNum4 = 256
 dropout_rate = 0.5
 #lr = 1e-3
 lr = 3e-3
-weight_decay = 5e-4
+#weight_decay = 5e-4
+weight_decay = 1e-3
 EPOCH = 1000
 BatchSize = 128
 seed = 123   # Random seed
@@ -139,7 +140,7 @@ for epoch in range(EPOCH):
     #else:
     #    worseCount += 1
 
-    if worseCount > 10:
+    if worseCount > 20:
         print("Constantly getting worse valid AUC score. Early stop!")
         break
 

@@ -4,10 +4,11 @@ import torch.nn.functional as F
 import math
 import os
 
-os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
+os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
 from torch.nn.parameter import Parameter
 from torch.nn.modules.module import Module
+
 
 class GraphConvolution(Module):
     def __init__(self, in_features, out_features, bias=True):
@@ -23,15 +24,15 @@ class GraphConvolution(Module):
 
     def reset_parameters(self):
         stdv = 1. / math.sqrt(self.weight.size(1))
-        #print(stdv)
+        # print(stdv)
         self.weight.data.uniform_(-stdv, stdv)
         if self.bias is not None:
             self.bias.data.uniform_(-stdv, stdv)
 
     def forward(self, input, adj):
         support = th.matmul(input, self.weight)
-        #support = th.mm(input, self.weight)
-        #output = th.spmm(adj, support)
+        # support = th.mm(input, self.weight)
+        # output = th.spmm(adj, support)
         output = th.matmul(adj, support)
         if self.bias is not None:
             return output + self.bias
@@ -42,19 +43,24 @@ class GraphConvolution(Module):
         return self.__class__.__name__ + ' (' \
                + str(self.in_features) + ' -> ' \
                + str(self.out_features) + ')'
-    
+
+
 class GCN(nn.Module):
-    def __init__(self, maxAtomNum, featureNum, hiddenLayerNum1, hiddenLayerNum2, hiddenLayerNum3, hiddenLayerNum4, classNum, dropout):
+    def __init__(self, maxAtomNum, featureNum, hiddenLayerNum1, hiddenLayerNum2, hiddenLayerNum3, hiddenLayerNum4, hiddenLayerNum5, hiddenLayerNum6,
+                 classNum, dropout):
         super(GCN, self).__init__()
         self.gcn1 = GraphConvolution(featureNum, hiddenLayerNum1)
         self.gcn2 = GraphConvolution(hiddenLayerNum1, hiddenLayerNum2)
         self.gcn3 = GraphConvolution(hiddenLayerNum2, hiddenLayerNum3)
         self.gcn4 = GraphConvolution(hiddenLayerNum3, hiddenLayerNum4)
-        self.fc = th.nn.Linear(in_features=hiddenLayerNum4*maxAtomNum, out_features=classNum)
+        #self.gcn5 = GraphConvolution(hiddenLayerNum4, hiddenLayerNum5)
+        #self.gcn6 = GraphConvolution(hiddenLayerNum5, hiddenLayerNum6)
+        #self.fc = th.nn.Linear(in_features=hiddenLayerNum6 * maxAtomNum, out_features=classNum)
+        self.fc = th.nn.Linear(in_features=hiddenLayerNum4 * maxAtomNum, out_features=classNum)
         self.dropout = dropout
 
     def forward(self, x, adj):
-        #print(x.shape)
+        # print(x.shape)
         x = F.relu(self.gcn1(x, adj))
         x = F.dropout(x, self.dropout, training=self.training)
         x = F.relu(self.gcn2(x, adj))
@@ -63,16 +69,21 @@ class GCN(nn.Module):
         x = F.dropout(x, self.dropout, training=self.training)
         x = F.relu(self.gcn4(x, adj))
         x = F.dropout(x, self.dropout, training=self.training)
-        #print(x.shape)
-        x = th.reshape(x, shape=[-1, 256*132])
+        #x = F.relu(self.gcn5(x, adj))
+        #x = F.dropout(x, self.dropout, training=self.training)
+        #x = F.relu(self.gcn6(x, adj))
+        #x = F.dropout(x, self.dropout, training=self.training)
+        # print(x.shape)
+        x = th.reshape(x, shape=[-1, 256 * 132])
         # Flatten
-        #print(x.shape)
+        # print(x.shape)
         # Fully Connetc
         x = self.fc(x)
         x = F.dropout(x, 0.1, training=self.training)
 
-        #print(x.shape)
+        # print(x.shape)
         return F.softmax(x, dim=1)
+
 
 '''
 class GCN(nn.Module):
