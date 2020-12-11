@@ -22,6 +22,10 @@
  
  - Homework4: `CSP` (`Constraint Satisfaction Problems`)
  
+ - Homework5
+ 
+ - Homework6: `MDP`
+ 
  - Project 1: `Drug Molecular Toxicity Prediction`
  
  --------------------
