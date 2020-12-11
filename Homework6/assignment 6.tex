@@ -1,0 +1,353 @@
+\documentclass{article} 
+\usepackage[fleqn]{amsmath}
+\usepackage{graphicx}
+\usepackage{mathrsfs}
+\usepackage{color}
+\usepackage{amssymb}
+\usepackage{amsfonts,amssymb}
+\usepackage{array}
+\usepackage{latexsym}
+\usepackage{tabularx} 
+\usepackage{enumerate}
+\usepackage{multirow}
+
+
+\title{\normalsize
+CS410: Artificial Intelligence 2020 Fall\\
+Homework 6: MDP\\
+Due date: 23:59:59 (GMT +08:00), December 25, 2020}
+\author{Chunyu Xue 518021910698}
+\date{}
+
+\begin{document} 
+\maketitle
+
+\section{Micro-Blackjack}
+\noindent In micro-blackjack, you repeatedly draw a card (with replacement) that is equally likely to be a 2, 3, or 4. You can either Draw or Stop if the total score of the cards you have drawn is less than 6. If your total score is 6 or higher, the game ends, and you receive a utility of 0. When you Stop, your utility is equal to your total score (up to 5), and the game ends. When you Draw, you receive no utility. There is no discount ($\gamma$ = 1). Let’s formulate this problem as an MDP with the following states: 0, 2, 3, 4, 5 and a Done state, for when the game ends.\\
+
+
+\noindent (a) What is the transition function and the reward function for this MDP? \\
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=6.5cm,height=8cm]{pictures/sol1.jpg}
+\end{figure}
+
+~\\
+
+\noindent (b) Fill in the following table of value iteration values for the first 4 iterations. \\
+
+\renewcommand\arraystretch{1.5}
+\begin{table}[tbh!]
+\begin{center}
+    \begin{tabular}{|p{1cm}| p{1cm}| p{1cm} | p{1cm}| p{1cm}| p{1cm}|}
+\hline 
+States & 0 & 2 & 3 & 4 & 5  \\
+\hline
+$V_0$ & 0  & 0  &  0 &  0 & 0   \\
+\hline  
+$V_1$ &  0 &  2 & 3  & 4  & 5   \\
+\hline 
+$V_2$ & 3  & 3  & 3  & 4  & 5   \\
+\hline 
+$V_3$ & 10/3  & 3  & 3  &  4 &  5  \\
+\hline
+$V_4$ & 10/3  & 3  & 3  & 4  &  5  \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+
+\newpage
+
+\noindent (c) You should have noticed that value iteration converged above. What is the optimal policy for the MDP?
+
+\renewcommand\arraystretch{1.5}
+\begin{table}[tbh!]
+\begin{center}
+    \begin{tabular}{|p{1cm}| p{1cm}| p{1cm} | p{1cm}| p{1cm}| p{1cm}|}
+\hline 
+States & 0 & 2 & 3 & 4 & 5  \\
+\hline
+$\pi^*$ & Draw  & Draw  & Stop  & Stop  & Stop   \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+\noindent (d) Perform one iteration of policy iteration for one step of this MDP, starting from the fixed policy below:
+
+\renewcommand\arraystretch{1.5}
+\begin{table}[tbh!]
+\begin{center}
+    \begin{tabular}{|p{1cm}| p{1cm}| p{1cm} | p{1cm}| p{1cm}| p{1cm}|}
+\hline 
+States & 0 & 2 & 3 & 4 & 5  \\
+\hline
+$\pi_i$ & Draw  & Stop  & Draw  & Stop  & Draw   \\
+\hline
+$V^{\pi_i}$ & 2  & 2  & 0  & 4  & 0   \\
+\hline 
+$\pi_{i+1}$ & Draw  & Stop  & Stop  & Stop  & Stop   \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+\newpage
+\section{Grid-World Water Park}
+\noindent Consider the MDP drawn below. The state space consists of all squares in a grid-world water park. There is a single waterslide that is composed of two ladder squares and two slide squares (marked with vertical bars and squiggly lines respectively). An agent in this water park can move from any square to any neighboring square, unless the current square is a slide in which case it must move forward one square along the slide. The actions are denoted by arrows between squares on the map and all deterministically move the agent in the given direction. The agent cannot stand still: it must move on each time step. Rewards are also shown below: the agent feels great pleasure as it slides down the water slide (+2), a certain amount of discomfort as it climbs the rungs of the ladder (-1), and receives rewards of 0 otherwise. The time horizon is infinite; this MDP goes on forever.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=6.5cm,height=3cm]{pictures/illu1.png}
+\end{figure}
+
+
+\noindent (a) How many (deterministic) policies $\pi$ are possible for this MDP?\\
+
+\textbf{Answer:} $2^{11}$. \\
+
+
+\noindent (b) Fill in the blank cells of this table with values that are correct for the corresponding function, discount, and state. \textit{Hint: You should not need to do substantial calculation here.}
+
+
+\renewcommand\arraystretch{1.5}
+\begin{table}[tbh!]
+\begin{center}
+    \begin{tabular}{|p{2cm}| p{2cm}| p{2cm} | p{2cm}|}
+\hline 
+  & $\gamma$ & s=A & s=E  \\
+\hline
+$V_3^*(s)$ & 1.0  & 0  & 4  \\
+\hline
+$V_{10}^*(s)$ & 1.0  &  2 & 4  \\
+\hline 
+$V_{10}^*(s)$ & 0.1  & 0  & 2.2  \\
+\hline
+$Q_{1}^*(s,west)$ & 1.0  &  --------------  & 0  \\
+\hline
+$Q_{10}^*(s,west)$ & 1.0 &  --------------  &  3 \\
+\hline
+$V^*(s)$ & 1.0  & $\infty$ & $\infty$  \\
+\hline 
+$V^*(s)$ & 0.1  & 0  &  2.2 \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+
+\newpage
+\section{Analysis of value iteration and policy iteration}
+
+\noindent (a) Please give an example where the value iteration does not converge when the discount $\gamma=1$.\\
+
+\textbf{Answer}: The value iteration will fail to converge when the action space is too large, the state space is too large or random interference.
+
+~\\
+
+\noindent (b) Try to prove the policy improvement method can indeed improve the previous policy and then prove its convergence.\\
+
+\textbf{Prove:} 
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=12.5cm,height=11cm]{pictures/sol2.png}
+\end{figure}
+
+Therefore, the policy improvement method can indeed improve the previous policy, and it is indeed converged.
+
+\newpage
+
+\section{MDP}
+\noindent Pacman is using MDPs to maximize his expected utility. In each environment:
+\begin{itemize}
+  \item Pacman has the standard actions \{North, East, South, West\} unless blocked by an outer wall
+  \item There is a reward of 1 point when eating the dot (for example, in the grid below, $R(C, South, F ) = 1$)
+  \item The game ends when the dot is eaten
+\end{itemize}
+
+\noindent (a) Consider the following grid where there is a single food pellet in the bottom right corner (F). The discount factor is $0.5$. There is no living reward. The states are simply the grid locations.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=4cm,height=3cm]{pictures/illu2.png}
+\end{figure}
+
+\noindent (a.i) What is the optimal policy for each state?
+
+\renewcommand\arraystretch{1.5}
+\begin{table}[tbh!]
+\begin{center}
+    \begin{tabular}{|p{2cm}| p{2cm}|}
+\hline 
+ State & $\pi$(state) \\
+\hline
+A & East or South  \\
+\hline
+B & East or South  \\
+\hline 
+C & South  \\
+\hline
+D & East  \\
+\hline
+E & East  \\
+\hline 
+\end{tabular}
+\end{center}
+\end{table}
+
+\noindent (a.ii) What is the optimal value for the state of being in the upper left corner (A)? Reminder: the discount factor is $0.5$.
+
+$V^*(A)$=$0.25$
+
+\noindent (a.iii) Using value iteration with the value of all states equal to zero at $k=0$, for which iteration $k$ will $V_k(A) = V^*(A)$ ? 
+
+$k=3$
+
+
+\newpage
+\noindent (b) Consider a new Pacman level that begins with cherries in locations D and F. Landing on a grid position with cherries is worth 5 points and then the cherries at that position disappear. There is still one dot, worth 1 point. The game still only ends when the dot is eaten.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=6cm,height=3cm]{pictures/illu3.png}
+\end{figure}
+
+\noindent (b.i) With no discount ($\gamma$ = 1) and a living reward of -1, what is the optimal policy for the states in this level's state space? \\
+
+\textbf{Answer:}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=10cm,height=11cm]{pictures/sol4.png}
+\end{figure}
+
+~\\
+\noindent (b.ii) With no discount ($\gamma$ = 1), what is the range of living reward values such that Pacman eats exactly one cherry when starting at position A? \\
+
+\textbf{Answer:} Valid range for the living reward is (-2.5,-1.25).
+
+\newpage
+
+\section{How do you Value It(eration)}
+\noindent (a) Fill out the following True/False questions.
+
+\begin{enumerate}
+  \item Let $A$ be the set of all actions and $S$ the set of states for some MDP. Assuming that $|A| << |S|$, one iteration of value iteration is generally faster than one iteration of policy iteration that solves a linear system during policy evaluation.
+  \item For any MDP, changing the discount factor does not affect the optimal policy for the MDP.
+\end{enumerate}
+
+\textbf{Answer:}
+
+\begin{enumerate}
+    \item True.
+    
+    \item False.
+\end{enumerate}
+
+\noindent The following problem will take place in various instances of a grid world MDP. Shaded cells represent walls. In all states, the agent has available actions $\uparrow,\downarrow,\leftarrow,\rightarrow$. Performing an action that would transition to an invalid state (outside the grid or into a wall) results in the agent remaining in its original state. In states with an arrow coming out, the agent has an additional action EXIT. In the event that the EXIT action is taken, the agent receives the labeled reward and ends the game in the terminal state T . Unless otherwise stated, all other transitions receive no reward, and all transitions are deterministic. \\
+
+\noindent For all parts of the problem, assume that value iteration begins with all states initialized to zero, i.e., $V_0(s)=0, \forall s$. Let the discount factor be $\gamma=0.5$ for all following parts. \\
+
+\noindent (b) Suppose that we are performing value iteration on the grid world MDP below.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=6cm,height=2.5cm]{pictures/illu4.png}
+\end{figure}
+
+\noindent (b.i) What are the optimal values for A and B?\\
+
+\textbf{Answer:}
+
+    $V^*(A) = \_25\_\_; ~~~~V^*(B) = \_\frac{25}{8}\_\_; $ \\
+
+
+\noindent (b.ii) After how many iterations $k$ will we have $V_k(s) = V^*(s)$ for all states $s$? If it never occurs, write “never". Write your answer below.\\
+
+\textbf{Answer:} 6.
+
+~\\
+~\\
+
+
+\noindent (b.iii) Suppose that we wanted to re-design the reward function. For which of the following new reward functions would the optimal policy remain unchanged? Let $R(s,a,s')$ be the original reward function.
+\begin{itemize}
+  \item $R_1(s,a,s') = 10 R(s,a,s')$
+  \item $R_2(s,a,s') = 1+ R(s,a,s')$
+  \item $R_3(s,a,s') = R^2(s,a,s')$
+  \item $R_4(s,a,s') = -1$
+  \item None
+\end{itemize}
+
+\textbf{Answer:} 1, 2, 3. \\
+
+\noindent (c) For the following problem, we add a new state in which we can take the EXIT action with a reward of $+x$.
+\begin{figure}[h]
+\centering
+\includegraphics[width=6cm,height=3.5cm]{pictures/illu5.png}
+\end{figure}
+
+\noindent (c.i) For what values of $x$ is it guaranteed that our optimal policy $\pi^*$ has $\pi^*(C) = \leftarrow$? Write $\infty$ and $-\infty$ if there is no upper or lower bound, respectively. Write the upper and lower bounds in each respective box.
+$$\_50_\_<x<\_\_\infty_\_\_$$
+
+
+\noindent (c.ii) For what values of $x$ does value iteration take the minimum number of iterations $k$ to converge to $V^*$ for all states? Write $\infty$ and $-\infty$ if there is no upper or lower bound, respectively. Write the upper and lower bounds in each respective box.
+$$\_\_50_\_\_\_\le x\le \_\_200_\_\_$$
+
+\noindent (c.iii) Fill the box with value $k$, the minimum number of iterations until $V_k$ has converged to $V^*$ for all states.
+
+$$k = \_\_4\_\_$$
+
+
+\newpage
+\section{Strange MDPs}
+
+\noindent In this MDP, the available actions at state A, B, C are LEFT, RIGHT, UP, and DOWN unless there is a wall in that direction. The only action at state D is the EXIT ACTION and gives the agent a reward of x. The reward for non-exit actions is always 1.
+\begin{figure}[h]
+\centering
+\includegraphics[width=6cm,height=3cm]{pictures/illu6.png}
+\end{figure}
+
+\noindent(a) Let all actions be deterministic. Assume $\gamma = 0.5$ . Express the following in terms of x. \\ 
+
+\textbf{Answer:}
+
+$$V^*(D) = \_x\_; ~~ V^*(C) = \_max\{1 + 0.5x, 2\}\_$$
+$$V^*(A) = \_max\{1 + 0.5x, 2\}\_\_; ~~ V^*(B) = \_\max\{1 + 0.5(1 + 0.5x), 2\}_\_\_$$
+
+~\\
+
+
+\noindent (b) Let any non-exit action be successful with probability = 0.5 . Otherwise, the agent stays in the same state with reward = 0. The EXIT ACTION from the state D is still deterministic and will always succeed. Assume that $\gamma = 0.5$. \\
+
+
+\noindent For which value of x does $Q^*(A,DOWN) = Q^*(A,RIGHT)$? Box your answer and justify/show your work.\\
+
+\textbf{Answer:} 
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=10cm,height=10cm]{pictures/sol5.jpg}
+\end{figure}
+
+\newpage
+
+Therefore, the value of x is 1.
+
+~\\
+~\\
+
+\noindent (c) We now add one more layer of complexity. Turns out that the reward function is not guaranteed to give a particular reward when the agent takes an action. Every time an agent transitions from one state to another, once the agent reaches the new state s', a fair 6-sided dice is rolled. If the dices lands with value x, the agent receives the reward $R(s, a, s') + x$. The sides of dice have value 1, 2, 3, 4, 5 and 6. \\
+
+\noindent Write down the new bellman update equation for $V_{k+1}(s)$ in terms of $T(s,a,s')$, $R(s,a,s')$, $V_k(s')$, and $\gamma$.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=8cm,height=2cm]{pictures/sol6.jpg}
+\end{figure}
+
+\end{document}
